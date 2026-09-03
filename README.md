@@ -1,7 +1,7 @@
 
 # 手持式 MID-360 扫描装置 · 参数化结构件
 
-<video src="renders/handheld_stack_exploded.mp4" controls width="100%"></video>
+![手持式 MID-360 扫描装置结构爆炸图](renders/handheld_stack_exploded_preview.png)
 
 Livox MID-360 激光雷达 + RealSense D435i + UAV V3 开发板的手持扫描装置结构件。
 全部几何由 Python + FreeCAD 代码生成，源代码是唯一真值——不手工建模，
