@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 SunXuehang
+Copyright (c) 2026 sunxuehang
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+---
+
+Third-party assets bundled or referenced by this repository keep their own
+licenses; this MIT license does not cover them:
+
+- `vendor/realsense/d435.dae` and its derivative `d435_mm.stl`
+  — Apache License 2.0, Copyright (c) 2017 Intel Corporation.
+  See `vendor/realsense/README.md`.
+- `vendor/livox/mid-360-asm.stp` (not tracked; fetched by
+  `scripts/fetch_mid360.sh`) — official Livox CAD, redistributed by DJI/Livox
+  under their own terms. See `vendor/livox/README.md`.
+- `手持结构/*.step` — input CAD supplied by the repository owner.

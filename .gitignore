@@ -1,0 +1,16 @@
+# 工作区与工具缓存
+.worktrees/
+__pycache__/
+
+# 代码生成的中间产物（step/ 是交付件，跟踪）
+models/*.FCStd
+models/*.FCBak
+exports/*
+reports/*.json
+
+# renders/ 同时存放生成图与大体积参考网格
+#   *.png 由 scripts/render_model.py、build_board_covers.py 生成
+#   *.stl / *.FCStd 是从原始整机 CAD 导出的算料参考，不可由本仓库代码再生
+renders/*.png
+renders/*.stl
+renders/*.FCStd
