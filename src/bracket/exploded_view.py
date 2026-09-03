@@ -55,9 +55,9 @@ EXPLODED_PARTS = (
     ExplodedPart("top_cover", "开发板上盖板", "128×78×3 PLA · 隔柱 8", "#2f9e8f", True),
     ExplodedPart("carrier", "UAV V3 开发板", "整机算料参考 CAD", "#b9c0c9", False),
     ExplodedPart("bottom_cover", "开发板下盖板", "128×78×3 PLA · 隔柱 13", "#1f6f66", True),
-    ExplodedPart("grip_body", "电池手柄本体", "Ø41.6 圆筒 · 16×M3 上吊", "#c2553f", True),
-    ExplodedPart("cell_pack", "3 × 五号锂电池", "等边三角形 · 约 11.1 V", "#4caf50", False),
-    ExplodedPart("bottom_cap", "手柄底盖", "Ø41.6×4 PLA · 3×M3", "#8f3a2b", True),
+    ExplodedPart("grip_body", "电池手柄本体", "Ø50 圆筒 · 16×M3 上吊", "#c2553f", True),
+    ExplodedPart("cell_pack", "三角柱电池包", "边长 40 · 高 90", "#4caf50", False),
+    ExplodedPart("bottom_cap", "手柄底盖", "Ø50×4 PLA · 3×M3", "#8f3a2b", True),
 )
 ANCHOR_KEY = "carrier"
 # The camera-facing D435i rides with Part B rather than getting its own step.
@@ -175,7 +175,7 @@ def build_assembled_parts(
         ),
         "bottom_cover": _shape_triangles(assembly.bottom_cover, deflection),
         "grip_body": _shape_triangles(assembly.grip_body, deflection),
-        "cell_pack": _shape_triangles(assembly.cell_pack, deflection),
+        "cell_pack": _shape_triangles(assembly.pack_reference, deflection),
         "bottom_cap": _shape_triangles(assembly.grip_bottom_cap, deflection),
     }
     missing = {part.key for part in EXPLODED_PARTS} - set(raw)

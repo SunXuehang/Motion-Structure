@@ -290,7 +290,7 @@ def test_complete_assembly_carries_the_battery_grip() -> None:
     # hangs entirely below the lower cover underside at Z = -5.5.
     assert len(assembly.grip_body.Solids) == 1
     assert len(assembly.grip_bottom_cap.Solids) == 1
-    assert len(assembly.cell_pack.Solids) == 3
+    assert len(assembly.pack_reference.Solids) == 1
     assert assembly.grip_body.BoundBox.ZMax <= -5.5 + 1e-6
     assert assembly.grip_body.common(assembly.bottom_cover).Volume < 1e-6
     assert assembly.grip_body.common(assembly.grip_bottom_cap).Volume < 1e-6
@@ -299,7 +299,7 @@ def test_complete_assembly_carries_the_battery_grip() -> None:
     for required in (
         "Battery grip body",
         "Battery grip bottom cap",
-        "Battery pack reference · 3 x AA",
+        "Battery pack reference · 40 mm triangular prism",
     ):
         assert required in export_labels
 
@@ -364,7 +364,7 @@ def test_board_bracket_package_writes_viewable_fcstd_and_step() -> None:
             "grip_bottom_cover_common_volume_mm3",
             "grip_part_b_common_volume_mm3",
             "grip_cap_common_volume_mm3",
-            "cells_grip_common_volume_mm3",
+            "pack_grip_common_volume_mm3",
         }
         assert interference_fields <= report.keys()
         assert all(report[field] < TOLERANCE for field in interference_fields)

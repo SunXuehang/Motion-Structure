@@ -1,4 +1,4 @@
-"""FreeCAD geometry checks for the cylindrical three-cell battery grip."""
+"""FreeCAD geometry checks for the cylindrical triangular-pack battery grip."""
 
 from math import cos, isclose, pi, radians, sin
 from pathlib import Path
@@ -22,12 +22,12 @@ from bracket.battery_grip import (
     build_battery_grip_print_plate,
     build_grip_cover_assembly,
     cap_screw_centers,
-    cell_centers,
     make_bottom_cap,
-    make_cell_reference,
     make_grip_body,
-    mount_pilot_centers,
-    pilot_axes_match_cover_holes,
+    make_pack_reference,
+    mount_hole_centers,
+    mount_holes_match_cover,
+    pack_vertices,
     validate_grip_cover_assembly,
     validate_print_plate,
 )
@@ -36,7 +36,7 @@ TOLERANCE = 1e-6
 P = BatteryGripParameters()
 BODY = make_grip_body(P)
 CAP = make_bottom_cap(P)
-CELLS = make_cell_reference(P)
+PACK = make_pack_reference(P)
 
 
 def _post_envelopes(extra: float = 0.2) -> Part.Shape:
@@ -72,8 +72,8 @@ def test_grip_body_is_one_valid_solid_on_the_cover_footprint() -> None:
 def test_bore_funnels_through_a_hollow_root_with_no_top_lid() -> None:
     """Catch a top lid, a solid conical root, or a bore that stops flaring."""
 
-    # A full-depth Ø33 column must be empty apart from the cap posts, right up
-    # to the cover underside: no lid, and the root is hollow all the way.
+    # A full-depth Ø47.8 column must be empty apart from the cap posts, right
+    # up to the cover underside: no lid, and the root is hollow all the way.
     column = Part.makeCylinder(
         P.bore_diameter / 2.0 - 0.1,
         P.cover_underside_z - P.grip_z0 - 0.2,
@@ -93,7 +93,7 @@ def test_bore_funnels_through_a_hollow_root_with_no_top_lid() -> None:
         )
     )
     assert BODY.common(ring).Volume > 0.9 * ring.Volume
-    # The mouth at the flange is the widened root bore, not Ø33.
+    # The mouth at the flange is the widened root bore, not Ø44.
     mouth = Part.makeCylinder(
         P.root_bore_top_diameter / 2.0 - 0.2,
         P.flange_thickness - 0.2,
@@ -132,38 +132,38 @@ def test_bore_funnels_through_a_hollow_root_with_no_top_lid() -> None:
     assert BODY.common(wall_ring).Volume > 0.9 * wall_ring.Volume
 
 
-def test_sixteen_m3_pilots_are_tapped_through_a_uniform_flange() -> None:
-    """Catch missing pilots, a wrong depth, or re-introduced flange thickening."""
+def test_sixteen_through_mount_holes_match_the_cover_holes() -> None:
+    """Catch missing mount holes, a wrong size, or a re-introduced tapped flange."""
 
-    assert pilot_axes_match_cover_holes(P)
-    assert len(mount_pilot_centers(P)) == 16
+    assert mount_holes_match_cover(P)
+    assert len(mount_hole_centers(P)) == 16
     down = App.Vector(0.0, 0.0, -1.0)
-    for x, y in mount_pilot_centers(P):
-        pilot = Part.makeCylinder(
-            P.pilot_diameter / 2.0 - 0.05,
-            P.pilot_depth - 0.1,
+    for x, y in mount_hole_centers(P):
+        hole = Part.makeCylinder(
+            P.mount_hole_diameter / 2.0 - 0.05,
+            P.mount_hole_depth - 0.1,
             App.Vector(x, y, P.cover_underside_z - 0.05),
             down,
         )
-        assert BODY.common(pilot).Volume < TOLERANCE
+        assert BODY.common(hole).Volume < TOLERANCE
         collar = Part.makeCylinder(
-            P.pilot_diameter / 2.0 + 1.2,
-            P.pilot_depth - 0.1,
+            P.mount_hole_diameter / 2.0 + 1.2,
+            P.mount_hole_depth - 0.1,
             App.Vector(x, y, P.cover_underside_z - 0.05),
             down,
         ).cut(
             Part.makeCylinder(
-                P.pilot_diameter / 2.0 + 0.05,
-                P.pilot_depth,
+                P.mount_hole_diameter / 2.0 + 0.05,
+                P.mount_hole_depth,
                 App.Vector(x, y, P.cover_underside_z),
                 down,
             )
         )
         assert BODY.common(collar).Volume > 0.9 * collar.Volume
         # The flange has no local thickening, so nothing may hang below it
-        # at the screw columns: the pilot is tapped clean through 6 mm.
+        # at the screw columns: the Ø3.4 hole is cut clean through 6 mm.
         below = Part.makeCylinder(
-            P.pilot_diameter / 2.0 + 1.2,
+            P.mount_hole_diameter / 2.0 + 1.2,
             1.0,
             App.Vector(x, y, P.flange_z0 - 1.0),
         )
@@ -182,19 +182,20 @@ def test_board_mounting_screw_heads_pass_through_the_flange() -> None:
         assert BODY.common(head).Volume < TOLERANCE
 
 
-def test_three_cells_load_as_an_equilateral_triangle_without_touching_pla() -> None:
-    """Catch a bore or post that the triangular lithium pack cannot clear."""
+def test_triangular_pack_loads_without_touching_pla() -> None:
+    """Catch a bore or post that the triangular prism pack cannot clear."""
 
-    assert len(CELLS.Solids) == P.cell_count
-    assert CELLS.common(BODY).Volume < TOLERANCE
-    assert CELLS.common(CAP).Volume < TOLERANCE
-    bounds = CELLS.BoundBox
-    assert isclose(bounds.ZMin, P.grip_z0, abs_tol=1e-6)
-    assert isclose(bounds.ZMax, P.cell_z1, abs_tol=1e-6)
+    assert len(PACK.Solids) == 1
+    assert PACK.common(BODY).Volume < TOLERANCE
+    assert PACK.common(CAP).Volume < TOLERANCE
+    bounds = PACK.BoundBox
+    # The pack seats on the cap-post tops, not on the tube mouth.
+    assert isclose(bounds.ZMin, P.pack_z0, abs_tol=1e-6)
+    assert isclose(bounds.ZMax, P.pack_z1, abs_tol=1e-6)
     # The pack's enclosing circle is centred on the bore axis.
-    for x, y in cell_centers(P):
+    for x, y in pack_vertices(P):
         assert isclose(
-            (x * x + y * y) ** 0.5 + P.cell_diameter / 2.0,
+            (x * x + y * y) ** 0.5,
             P.pack_circumdiameter / 2.0,
             abs_tol=1e-6,
         )
@@ -241,8 +242,8 @@ def test_rear_window_passes_the_dc_leads_through_the_tube_wall() -> None:
             ),
         )
         assert BODY.common(probe).Volume > 0.5 * probe.Volume, angle
-    # The window sits in the plain wall, above the cells and below the cone.
-    assert P.window_center_z - P.window_height / 2.0 > P.cell_z1
+    # The window sits in the plain wall, above the pack and below the cone.
+    assert P.window_center_z - P.window_height / 2.0 > P.pack_z1
     assert P.window_center_z + P.window_height / 2.0 < P.root_z0
 
 
@@ -267,7 +268,7 @@ def test_bottom_cap_screws_into_three_posts_inside_the_bore() -> None:
         ).Volume < TOLERANCE
         assert BODY.common(
             Part.makeCylinder(
-                P.pilot_diameter / 2.0 - 0.05,
+                P.cap_pilot_diameter / 2.0 - 0.05,
                 P.cap_pilot_depth - 0.1,
                 App.Vector(x, y, P.grip_z0 + 0.05),
             )
@@ -278,7 +279,7 @@ def test_bottom_cap_screws_into_three_posts_inside_the_bore() -> None:
             App.Vector(x, y, P.grip_z0 + 0.05),
         ).cut(
             Part.makeCylinder(
-                P.pilot_diameter / 2.0 + 0.05,
+                P.cap_pilot_diameter / 2.0 + 0.05,
                 P.cap_pilot_depth,
                 App.Vector(x, y, P.grip_z0),
             )

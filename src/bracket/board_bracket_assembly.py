@@ -14,7 +14,7 @@ import Part
 from .battery_grip import (
     BatteryGripParameters,
     make_bottom_cap,
-    make_cell_reference,
+    make_pack_reference,
     make_grip_body,
 )
 from .board_covers import BoardCoverParameters, make_bottom_cover, make_top_cover
@@ -62,7 +62,7 @@ class BoardBracketAssembly:
     d435i_lens_direction: App.Vector
     grip_body: Part.Shape
     grip_bottom_cap: Part.Shape
-    cell_pack: Part.Shape
+    pack_reference: Part.Shape
     screws: tuple[tuple[str, Part.Shape], ...]
 
 
@@ -364,7 +364,7 @@ def build_board_bracket_assembly(project_root: Path) -> BoardBracketAssembly:
         # the lower cover underside at Z = -5.5.
         grip_body=make_grip_body(grip_parameters),
         grip_bottom_cap=make_bottom_cap(grip_parameters),
-        cell_pack=make_cell_reference(grip_parameters),
+        pack_reference=make_pack_reference(grip_parameters),
         screws=(),
     )
 
@@ -392,7 +392,11 @@ def _named_local_shapes(
         ),
         ("GripBody", "Battery grip body", assembly.grip_body),
         ("GripBottomCap", "Battery grip bottom cap", assembly.grip_bottom_cap),
-        ("CellPackReference", "Battery pack reference · 3 x AA", assembly.cell_pack),
+        (
+            "CellPackReference",
+            "Battery pack reference · 40 mm triangular prism",
+            assembly.pack_reference,
+        ),
         *tuple((name, name, shape) for name, shape in assembly.screws),
     )
 
@@ -461,7 +465,7 @@ def _battery_grip_report_fields(
             assembly.d435i_reference
         ).Volume,
         "grip_cap_common_volume_mm3": grip.common(assembly.grip_bottom_cap).Volume,
-        "cells_grip_common_volume_mm3": assembly.cell_pack.common(grip).Volume,
+        "pack_grip_common_volume_mm3": assembly.pack_reference.common(grip).Volume,
         "grip_top_z": grip.BoundBox.ZMax,
         "grip_bottom_z": assembly.grip_bottom_cap.BoundBox.ZMin,
         # The grip hangs entirely below the compute carrier's Z envelope, so no

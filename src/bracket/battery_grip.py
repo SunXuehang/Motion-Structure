@@ -3,16 +3,17 @@
 The grip is a printable PLA tube hanging from a flange that reproduces the
 lower cover's 128 x 78 mm outline.  The flange bolts flat against the cover
 underside through all sixteen of the cover's side-extension holes, eight per
-side at X = +/-59 mm.
+side at X = +/-59 mm.  Each M3 passes through a matching Ø3.4 hole in the
+flange and is locked by a nut under the flange -- the flange is never tapped.
 
 The tube's bore runs straight through the flange: the handle has no top lid
 of its own, so the lower cover closes the battery cavity and the board's
 bottom fan exhausts straight down into the bore, over the pack.  The bore
-holds three upright AA-size (14500) lithium cells whose bottom face is an
-equilateral triangle; the pack loads from the open bottom and is closed by a
-cap screwed into three posts standing in the gaps the triangle leaves against
-the bore wall.  A small window in the tube's rear (-Y) wall passes the two
-DC 12 V leads (supply and charging).
+holds one solid prismatic battery pack whose footprint is an equilateral
+triangle with a 36 mm side; the pack loads from the open bottom, seats on
+three cap-screw posts fused into the bore wall, and is closed by a cap
+screwed into those posts.  A small window in the tube's rear (-Y) wall
+passes the two DC 12 V leads (supply and charging).
 
 Every dimension is in millimetres, in the same board-local frame as
 :mod:`bracket.board_covers`, where the lower cover underside sits at
@@ -29,14 +30,15 @@ if TYPE_CHECKING:  # pragma: no cover - only needed for annotations
     import Part
 
 
-# One AA-size (IEC R6 / Li-ion 14500) cell.  Three in series give the
-# 11.1 V nominal / 12.6 V full pack the DC 12 V leads carry.
-AA_CELL_DIAMETER_MM = 14.5
-AA_CELL_LENGTH_MM = 50.5
-PACK_CELL_COUNT = 3
-ASSEMBLY_SOLID_COUNT = 3 + PACK_CELL_COUNT
-# Cells sit at 90/210/330 degrees; the cap posts take the gaps between them.
-CELL_ANGLES_DEG = (90.0, 210.0, 330.0)
+# One solid prismatic battery pack: an equilateral triangle footprint with a
+# 36 mm side, 78 mm tall.  The pack seats on the three cap posts, not on the
+# tube mouth, so the cap leaves a 5 mm wiring pocket under it.
+PACK_TRIANGLE_SIDE_MM = 36.0
+PACK_HEIGHT_MM = 78.0
+ASSEMBLY_SOLID_COUNT = 4
+# Pack vertices sit at 90/210/330 degrees; the cap posts take the gaps
+# between them.
+PACK_VERTEX_ANGLES_DEG = (90.0, 210.0, 330.0)
 POST_ANGLES_DEG = (30.0, 150.0, 270.0)
 
 @dataclass(frozen=True)
@@ -50,12 +52,17 @@ class BatteryGripParameters:
     flange_thickness: float = 6.0
     cover_underside_z: float = -5.5
 
-    # Screw interface: sixteen M3 driven down through the cover's Ø3.4
-    # extension holes and tapped through the flange's full 6 mm.  The flange
-    # is one uniform slab -- no local thickening at the hole columns.
-    mount_pilot_x: float = 59.0
-    mount_pilot_y_pitch: float = 10.0
-    pilot_diameter: float = 2.9
+    # Screw interface: sixteen M3 pass down through the cover's Ø3.4
+    # extension holes and through matching Ø3.4 clearance holes in the full
+    # 6 mm flange, held by M3 nuts under the flange.  The flange is one
+    # uniform slab -- no local thickening at the hole columns, no tapping.
+    mount_hole_x: float = 59.0
+    mount_hole_y_pitch: float = 10.0
+    mount_hole_diameter: float = 3.4
+
+    # The bottom-cap pilots are the only tapped threads in the handle: each
+    # Ø6.5 post carries an M3 thread cut from a Ø2.9 pilot hole.
+    cap_pilot_diameter: float = 2.9
 
     # Pass-through clearance for the four board-mounting screw heads on the
     # cover underside at X = +/-50 mm, Y = +/-35 mm.
@@ -64,29 +71,33 @@ class BatteryGripParameters:
     board_screw_clearance_diameter: float = 6.5
 
     # Cylindrical grip, centred under the cover.  The bottom fan is allowed to
-    # exhaust into the bore, so the flange keeps no fan or IMU opening.
-    bore_diameter: float = 35.6
+    # exhaust into the bore, so the flange keeps no fan or IMU opening.  The
+    # tube was slimmed to Ø44/Ø50 and shortened by 10 mm to 99.
+    bore_diameter: float = 44.0
     wall_thickness: float = 3.0
-    tube_height: float = 72.0
+    tube_height: float = 99.0
     root_height: float = 14.0
-    root_top_diameter: float = 55.0
+    root_top_diameter: float = 60.0
 
-    # Three upright cells on an equilateral triangle, centred on the bore axis.
-    cell_diameter: float = AA_CELL_DIAMETER_MM
-    cell_length: float = AA_CELL_LENGTH_MM
-    cell_count: int = PACK_CELL_COUNT
-    cell_pitch: float = 14.8
+    # Solid triangular-prism pack, centred on the bore axis.
+    pack_side: float = PACK_TRIANGLE_SIDE_MM
+    pack_height: float = PACK_HEIGHT_MM
 
-    # Rear DC-lead window in the tube's -Y wall.
+    # Rear DC-lead window in the tube's -Y wall.  window_top_gap is the plain
+    # wall kept between the window's top edge and the conical root: 2 mm more
+    # than a band-centred window, so the window sits farther from the flange.
     window_length: float = 14.0
-    window_height: float = 10.0
+    window_height: float = 13.0
     window_corner_radius: float = 2.0
+    window_top_gap: float = 2.5
 
     # Bottom cap, screwed into three posts standing in the bore's free gaps.
     # Each post is tapped over its whole height, so post_height *is* the M3
     # thread engagement -- it is deliberately independent of the flange.
+    # post_radius sits inboard of the Ø44/Ø50 wall so the Ø6.5 posts fuse
+    # into the bore wall without punching through the thinner tube.
     post_diameter: float = 6.5
-    post_radius: float = 15.3
+    post_radius: float = 20.0
     post_height: float = 5.0
     cap_thickness: float = 4.0
     cap_hole_diameter: float = 3.4
@@ -143,8 +154,8 @@ class BatteryGripParameters:
         return 0.5 + self.wall_thickness + sagitta + 1.0
 
     @property
-    def pilot_depth(self) -> float:
-        """M3 thread engagement: each pilot is tapped through the whole flange."""
+    def mount_hole_depth(self) -> float:
+        """Depth of the mounting through-holes: the flange is cut clean through."""
 
         return self.flange_thickness
 
@@ -156,21 +167,27 @@ class BatteryGripParameters:
 
     @property
     def grip_z0(self) -> float:
-        """Open bottom face of the tube; the cells rest on this plane."""
+        """Open bottom face of the tube; the cap posts stand on this plane."""
 
         return self.root_z0 - self.tube_height
 
     @property
-    def cell_z1(self) -> float:
-        """Top of the loaded cells."""
+    def pack_z0(self) -> float:
+        """Bottom face of the loaded pack: it seats on the cap-post tops."""
 
-        return self.grip_z0 + self.cell_length
+        return self.grip_z0 + self.post_height
+
+    @property
+    def pack_z1(self) -> float:
+        """Top of the loaded pack."""
+
+        return self.pack_z0 + self.pack_height
 
     @property
     def plenum_height(self) -> float:
         """Free bore above the pack, which the fan exhausts into."""
 
-        return self.cover_underside_z - self.cell_z1
+        return self.cover_underside_z - self.pack_z1
 
     @property
     def cap_z0(self) -> float:
@@ -180,9 +197,13 @@ class BatteryGripParameters:
 
     @property
     def window_center_z(self) -> float:
-        """Centre the window in the plain wall between the root and the cells."""
+        """Centre the window, keeping window_top_gap of plain wall above it.
 
-        return (self.root_z0 + self.cell_z1) / 2.0
+        The window hangs 2 mm lower than a band-centred one, i.e. farther from
+        the flange, so the weld line by the conical root keeps more plastic.
+        """
+
+        return self.root_z0 - self.window_top_gap - self.window_height / 2.0
 
     @property
     def total_height(self) -> float:
@@ -192,29 +213,36 @@ class BatteryGripParameters:
 
     @property
     def pack_circumdiameter(self) -> float:
-        """Diameter of the circle enclosing the triangular three-cell pack."""
+        """Diameter of the circle enclosing the triangular pack footprint."""
 
-        return 2.0 * (self.cell_pitch / sqrt(3.0) + self.cell_diameter / 2.0)
+        return 2.0 * self.pack_side / sqrt(3.0)
+
+    @property
+    def pack_inradius(self) -> float:
+        """Distance from the bore axis to each triangle edge line."""
+
+        return self.pack_side / (2.0 * sqrt(3.0))
 
     def __post_init__(self) -> None:
         positive = (
             self.flange_length,
             self.flange_width,
             self.flange_thickness,
-            self.mount_pilot_x,
-            self.mount_pilot_y_pitch,
-            self.pilot_diameter,
+            self.mount_hole_x,
+            self.mount_hole_y_pitch,
+            self.mount_hole_diameter,
+            self.cap_pilot_diameter,
             self.board_screw_clearance_diameter,
             self.bore_diameter,
             self.wall_thickness,
             self.tube_height,
             self.root_height,
             self.root_top_diameter,
-            self.cell_diameter,
-            self.cell_length,
-            self.cell_pitch,
+            self.pack_side,
+            self.pack_height,
             self.window_length,
             self.window_height,
+            self.window_top_gap,
             self.post_diameter,
             self.post_radius,
             self.post_height,
@@ -225,8 +253,6 @@ class BatteryGripParameters:
         )
         if not all(isfinite(value) and value > 0.0 for value in positive):
             raise ValueError("grip dimensions must be finite and positive")
-        if self.cell_count != 3:
-            raise ValueError("the triangular pack holds exactly three cells")
         if not isfinite(self.cover_underside_z):
             raise ValueError("the cover underside plane must be finite")
         if 2.0 * self.flange_corner_radius > min(
@@ -250,16 +276,16 @@ class BatteryGripParameters:
         if self.root_bore_top_diameter >= self.flange_width - 20.0:
             raise ValueError("the root bore leaves too little flange material")
 
-        # The triangular pack must load into the bore with clearance.
-        if self.cell_pitch < self.cell_diameter:
-            raise ValueError("cell pitch cannot be smaller than the cell diameter")
+        # The triangular pack must load into the bore with clearance.  The
+        # pack seats on the post tops, so it can rotate freely inside the
+        # round bore without ever meeting the posts.
         if self.pack_circumdiameter >= self.bore_diameter:
             raise ValueError("the triangular pack does not fit the bore")
-        if self.cell_z1 >= self.cover_underside_z:
-            raise ValueError("the loaded cells reach the lower cover")
+        if self.pack_z1 >= self.cover_underside_z:
+            raise ValueError("the loaded pack reaches the lower cover")
 
         # The three cap-screw posts must overlap the bore wall (a tangent post
-        # fuses along a line and yields an invalid solid) and clear every cell.
+        # fuses along a line and yields an invalid solid).
         post_radius = self.post_diameter / 2.0
         bore_radius = self.bore_diameter / 2.0
         if self.post_radius + post_radius < bore_radius + 0.3:
@@ -275,38 +301,34 @@ class BatteryGripParameters:
             raise ValueError("cap-screw M3 engagement must be at least 5 mm")
         if self.cap_thickness - self.cap_counterbore_depth + self.cap_pilot_depth < 5.0:
             raise ValueError("the cap screw has too little shank to grip")
-        clearance = post_radius + self.cell_diameter / 2.0
-        for post_x, post_y in _polar_offsets(self.post_radius, POST_ANGLES_DEG):
-            for cell_x, cell_y in _polar_offsets(
-                self.cell_pitch / sqrt(3.0), CELL_ANGLES_DEG
-            ):
-                if sqrt((post_x - cell_x) ** 2 + (post_y - cell_y) ** 2) <= clearance:
-                    raise ValueError("a cap-screw post collides with a cell")
 
-        # The DC-lead window must sit in the plain wall above the cells.
+        # The DC-lead window must sit in the plain wall above the pack with
+        # plastic above it (window_top_gap) and clear of the pack top below.
+        if (
+            self.root_z0 - self.pack_z1
+            <= self.window_top_gap + self.window_height
+        ):
+            raise ValueError("no plain wall band left for the DC-lead window")
         if self.window_length >= self.bore_diameter:
             raise ValueError("the window is wider than the bore")
-        if self.window_center_z - self.window_height / 2.0 <= self.cell_z1:
-            raise ValueError("the window must clear the loaded cells")
-        if self.window_center_z + self.window_height / 2.0 >= self.root_z0:
-            raise ValueError("the window must stay below the conical root")
 
-        # Fasteners.  The flange is one uniform slab, so its full thickness is
-        # the available M3 thread engagement.
-        if self.pilot_depth < 5.0:
-            raise ValueError("M3 pilot engagement must be at least 5 mm")
-        if self.pilot_diameter >= self.mount_pilot_y_pitch:
-            raise ValueError("adjacent pilots must leave material between them")
+        # Mount holes are plain M3 clearance cut through the whole 6 mm
+        # flange; retention comes from an M3 nut under the flange, never from
+        # threads in the flange itself.
+        if self.mount_hole_diameter >= self.mount_hole_y_pitch:
+            raise ValueError(
+                "adjacent mount holes must leave material between them"
+            )
         if (
-            self.mount_pilot_x + self.pilot_diameter / 2.0
+            self.mount_hole_x + self.mount_hole_diameter / 2.0
             >= self.flange_length / 2.0
         ):
-            raise ValueError("the pilot columns leave the flange length")
+            raise ValueError("the mount hole columns leave the flange length")
         if (
-            3.5 * self.mount_pilot_y_pitch + self.pilot_diameter / 2.0
+            3.5 * self.mount_hole_y_pitch + self.mount_hole_diameter / 2.0
             >= self.flange_width / 2.0
         ):
-            raise ValueError("the outer pilot row leaves the flange width")
+            raise ValueError("the outer mount hole row leaves the flange width")
         if self.cap_counterbore_diameter <= self.cap_hole_diameter:
             raise ValueError("the cap counterbore must exceed its through hole")
         if self.cap_counterbore_depth >= self.cap_thickness:
@@ -325,10 +347,10 @@ def _polar_offsets(
     )
 
 
-def cell_centers(p: BatteryGripParameters) -> tuple[tuple[float, float], ...]:
-    """Return the board-local XY axes of the three upright cells."""
+def pack_vertices(p: BatteryGripParameters) -> tuple[tuple[float, float], ...]:
+    """Return the board-local XY vertices of the triangular pack footprint."""
 
-    return _polar_offsets(p.cell_pitch / sqrt(3.0), CELL_ANGLES_DEG)
+    return _polar_offsets(p.pack_side / sqrt(3.0), PACK_VERTEX_ANGLES_DEG)
 
 
 def cap_screw_centers(
@@ -339,14 +361,14 @@ def cap_screw_centers(
     return _polar_offsets(p.post_radius, POST_ANGLES_DEG)
 
 
-def mount_pilot_centers(
+def mount_hole_centers(
     p: BatteryGripParameters,
 ) -> tuple[tuple[float, float], ...]:
-    """Return all sixteen flange pilot axes, matching the cover hole columns."""
+    """Return all sixteen flange mount-hole axes, matching the cover columns."""
 
     return tuple(
-        (x, multiplier * p.mount_pilot_y_pitch)
-        for x in (-p.mount_pilot_x, p.mount_pilot_x)
+        (x, multiplier * p.mount_hole_y_pitch)
+        for x in (-p.mount_hole_x, p.mount_hole_x)
         for multiplier in (-3.5, -2.5, -1.5, -0.5, 0.5, 1.5, 2.5, 3.5)
     )
 
@@ -470,18 +492,18 @@ def make_grip_body(p: BatteryGripParameters) -> "Part.Shape":
     solid = _fuse_all(
         (_fuse_all((flange, root, tube)).cut(bore), *posts)
     )
-    pilots = tuple(
+    mount_holes = tuple(
         Part.makeCylinder(
-            p.pilot_diameter / 2.0,
-            p.pilot_depth,
+            p.mount_hole_diameter / 2.0,
+            p.mount_hole_depth,
             App.Vector(x, y, p.cover_underside_z),
             App.Vector(0.0, 0.0, -1.0),
         )
-        for x, y in mount_pilot_centers(p)
+        for x, y in mount_hole_centers(p)
     )
     cap_pilots = tuple(
         Part.makeCylinder(
-            p.pilot_diameter / 2.0,
+            p.cap_pilot_diameter / 2.0,
             p.cap_pilot_depth + 0.1,
             App.Vector(x, y, p.grip_z0 - 0.1),
         )
@@ -512,7 +534,7 @@ def make_grip_body(p: BatteryGripParameters) -> "Part.Shape":
         ),
         App.Rotation(App.Vector(1.0, 0.0, 0.0), -90.0),
     )
-    cutters = _fuse_all((*pilots, *cap_pilots, *board_screw_holes, window))
+    cutters = _fuse_all((*mount_holes, *cap_pilots, *board_screw_holes, window))
     return solid.cut(cutters).removeSplitter()
 
 
@@ -546,20 +568,15 @@ def make_bottom_cap(p: BatteryGripParameters) -> "Part.Shape":
     return plate.cut(_fuse_all((*holes, *counterbores))).removeSplitter()
 
 
-def make_cell_reference(p: BatteryGripParameters) -> "Part.Shape":
-    """Build the triangular three-cell pack envelope; never a printed part."""
+def make_pack_reference(p: BatteryGripParameters) -> "Part.Shape":
+    """Build the solid triangular-prism pack envelope; never a printed part."""
 
     import FreeCAD as App
     import Part
 
-    return _fuse_all(
-        Part.makeCylinder(
-            p.cell_diameter / 2.0,
-            p.cell_length,
-            App.Vector(x, y, p.grip_z0),
-        )
-        for x, y in cell_centers(p)
-    )
+    points = [App.Vector(x, y, p.pack_z0) for x, y in pack_vertices(p)]
+    face = Part.Face(Part.makePolygon([*points, points[0]]))
+    return face.extrude(App.Vector(0.0, 0.0, p.pack_height))
 
 
 @dataclass(frozen=True)
@@ -569,7 +586,7 @@ class GripCoverAssembly:
     lower_cover: "Part.Shape"
     grip_body: "Part.Shape"
     bottom_cap: "Part.Shape"
-    cell_reference: "Part.Shape"
+    pack_reference: "Part.Shape"
 
 
 def build_grip_cover_assembly(
@@ -604,7 +621,7 @@ def build_grip_cover_assembly(
         lower_cover=cover,
         grip_body=make_grip_body(parameters),
         bottom_cap=make_bottom_cap(parameters),
-        cell_reference=make_cell_reference(parameters),
+        pack_reference=make_pack_reference(parameters),
     )
 
 
@@ -639,7 +656,7 @@ def build_battery_grip_print_plate(
         ),
         (
             "Battery grip bottom cap",
-            place_on_bed(make_bottom_cap(parameters), 0.0, 48.0, flip),
+            place_on_bed(make_bottom_cap(parameters), 0.0, 56.0, flip),
         ),
     )
 
@@ -681,9 +698,9 @@ def validate_print_plate(
 INTERFERENCE_FIELDS = (
     "grip_cover_common_volume_mm3",
     "grip_cap_common_volume_mm3",
-    "cells_grip_common_volume_mm3",
-    "cells_cap_common_volume_mm3",
-    "cells_cover_common_volume_mm3",
+    "pack_grip_common_volume_mm3",
+    "pack_cap_common_volume_mm3",
+    "pack_cover_common_volume_mm3",
 )
 
 
@@ -748,11 +765,11 @@ def validate_grip_cover_assembly(
         "bottom_cap_volume_mm3": assembly.bottom_cap.Volume,
         "grip_cover_common_volume_mm3": body.common(assembly.lower_cover).Volume,
         "grip_cap_common_volume_mm3": body.common(assembly.bottom_cap).Volume,
-        "cells_grip_common_volume_mm3": assembly.cell_reference.common(body).Volume,
-        "cells_cap_common_volume_mm3": assembly.cell_reference.common(
+        "pack_grip_common_volume_mm3": assembly.pack_reference.common(body).Volume,
+        "pack_cap_common_volume_mm3": assembly.pack_reference.common(
             assembly.bottom_cap
         ).Volume,
-        "cells_cover_common_volume_mm3": assembly.cell_reference.common(
+        "pack_cover_common_volume_mm3": assembly.pack_reference.common(
             assembly.lower_cover
         ).Volume,
         "flange_top_z": bounds.ZMax,
@@ -763,27 +780,32 @@ def validate_grip_cover_assembly(
     }
 
 
-def pilot_axes_match_cover_holes(p: BatteryGripParameters | None = None) -> bool:
-    """Confirm every flange pilot axis coincides with a cover extension hole."""
+def mount_holes_match_cover(p: BatteryGripParameters | None = None) -> bool:
+    """Confirm every flange mount hole sits on a cover extension hole, and the
+    through diameter matches the cover's, so an M3 passes both plates freely."""
 
     from .board_covers import BoardCoverParameters, extension_hole_centers
 
     parameters = p or BatteryGripParameters()
+    cover = BoardCoverParameters()
     cover_holes = {
         (round(x, 6), round(y, 6))
-        for x, y in extension_hole_centers(BoardCoverParameters())
+        for x, y in extension_hole_centers(cover)
     }
-    pilots = {
-        (round(x, 6), round(y, 6)) for x, y in mount_pilot_centers(parameters)
+    holes = {
+        (round(x, 6), round(y, 6)) for x, y in mount_hole_centers(parameters)
     }
-    return pilots == cover_holes
+    return (
+        holes == cover_holes
+        and parameters.mount_hole_diameter == cover.mounting_hole_diameter
+    )
 
 
 NAMED_ASSEMBLY_SHAPES = (
     ("LowerCover", "UAV V3 下盖板"),
     ("GripBody", "电池手柄本体"),
     ("GripBottomCap", "电池手柄底盖"),
-    ("CellPackReference", "3 x 五号锂电池参考（非打印件）"),
+    ("CellPackReference", "三角柱电池包参考（非打印件）"),
 )
 
 
@@ -794,7 +816,7 @@ def _assembly_members(
         assembly.lower_cover,
         assembly.grip_body,
         assembly.bottom_cap,
-        assembly.cell_reference,
+        assembly.pack_reference,
     )
     return tuple(
         (name, label, shape)
@@ -813,8 +835,8 @@ def _step_reimports_as_valid_solids(path: Path, expected_solids: int) -> bool:
     """Confirm a STEP export reimports as exactly *expected_solids* valid solids.
 
     Counting solids rather than document objects keeps the check stable: the
-    three-cell reference is one shape on export but STEP may hand it back as
-    three separate products.
+    pack reference is one shape on export but STEP may hand it back as a
+    separate product.
     """
 
     import FreeCAD as App
@@ -861,8 +883,10 @@ def build_battery_grip_outputs(
     for field in INTERFERENCE_FIELDS:
         if results[field] >= 1e-6:
             raise ValueError(f"unexpected interference in {field}: {results}")
-    if not pilot_axes_match_cover_holes(p):
-        raise ValueError("flange pilot axes no longer match the cover extension holes")
+    if not mount_holes_match_cover(p):
+        raise ValueError(
+            "flange mount holes no longer match the cover extension holes"
+        )
 
     if output_dir is None:
         model_dir = root / "models"
@@ -964,25 +988,24 @@ def build_battery_grip_outputs(
         "wall_thickness_mm": p.wall_thickness,
         "grip_circumference_mm": p.grip_circumference,
         "tube_height_mm": p.tube_height,
-        "cell_type": "AA / 14500 lithium",
-        "cell_count": p.cell_count,
-        "cell_size_mm": [p.cell_diameter, p.cell_length],
-        "cell_arrangement": "equilateral triangle, upright, centred on the bore axis",
-        "cell_pitch_mm": p.cell_pitch,
-        "cell_centers_mm": [list(center) for center in cell_centers(p)],
+        "pack_shape": "solid equilateral triangular prism",
+        "pack_side_mm": p.pack_side,
+        "pack_height_mm": p.pack_height,
+        "pack_vertices_mm": [list(vertex) for vertex in pack_vertices(p)],
         "pack_circumdiameter_mm": p.pack_circumdiameter,
         "bore_pack_radial_clearance_mm": (
             p.bore_diameter - p.pack_circumdiameter
         ) / 2.0,
-        "pack_nominal_voltage_v": 3.7 * p.cell_count,
+        "pack_seat_z": p.pack_z0,
+        "pack_seats_on_cap_posts": True,
         "top_lid": "none - the lower board cover closes the bore",
         "plenum_height_mm": p.plenum_height,
         "handle_total_height_mm": p.total_height,
         "flange_size_mm": [p.flange_length, p.flange_width, p.flange_thickness],
-        "mount_screw_count": len(mount_pilot_centers(p)),
-        "mount_pilot_diameter_mm": p.pilot_diameter,
-        "mount_pilot_depth_mm": p.pilot_depth,
-        "pilot_axes_match_cover_holes": pilot_axes_match_cover_holes(p),
+        "mount_screw_count": len(mount_hole_centers(p)),
+        "mount_hole_diameter_mm": p.mount_hole_diameter,
+        "mount_hole_depth_mm": p.mount_hole_depth,
+        "mount_holes_match_cover": mount_holes_match_cover(p),
         "board_screw_clearance_diameter_mm": p.board_screw_clearance_diameter,
         "dc_window_size_mm": [p.window_length, p.window_height],
         "dc_window_center_mm": [
