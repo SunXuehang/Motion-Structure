@@ -1,345 +1,308 @@
-
 # 手持式 MID-360 扫描装置 · 参数化结构件
 
-![手持式 MID-360 扫描装置结构爆炸图](renders/handheld_stack_exploded_preview.png)
+![手持式 MID-360 扫描装置装配预览](renders/handheld_stack_exploded_preview.png)
 
-Livox MID-360 激光雷达 + RealSense D435i + UAV V3 开发板的手持扫描装置结构件。
-全部几何由 Python + FreeCAD 代码生成，源代码是唯一真值——不手工建模，
-FCStd / STEP 全部可一键重建并自动校验干涉。
+上图为早期电池手柄方案的视频首帧，供理解装配关系；尚未反映后续护壁、热熔螺母孔和站立手柄的变化。当前尺寸以源码参数和下文说明为准。
 
-结构爆炸动画：`renders/handheld_stack_exploded.mp4`（由代码生成，未入库；
-跑 `scripts/build_exploded_view.py` 重建）。
+本项目为 Livox MID-360 激光雷达、RealSense D435i 和 UAV V3 开发板提供 PLA 打印结构件。
+几何由 Python + FreeCAD 生成，包含雷达倾斜支架、开发板上下盖板，以及两种可替换的手柄。
+尺寸单位均为 **mm**；传感器、开发板、电池包和金属紧固件属于外购件或参考模型。
 
-## 六个 PLA 打印件
+## 结构件与 STEP 文件
 
-| 件 | STEP | 关键尺寸 |
+四个共用件配合一种手柄使用：**站立手柄方案共 5 个打印件；电池手柄方案共 6 个打印件**。
+当前共有 7 种独立打印件，上盖板的两个方向文件是同一结构的打印摆放方案，不增加零件数量。
+
+| 结构件 | STEP 文件 | 当前主要尺寸或用途 |
 |---|---|---|
-| 结构 A · 雷达托板 | [`step/part_a_radar_plate.step`](step/part_a_radar_plate.step) | 69 × 85 × 6 |
-| 结构 B · 倾斜底座 | [`step/part_b_tilt_base.step`](step/part_b_tilt_base.step) | 128 × 78 × 4，R45，0–40° |
-| 开发板上盖板 | [`step/board_cover_upper.step`](step/board_cover_upper.step) | 128 × 78 × 3，隔柱 10 |
-| 开发板下盖板 | [`step/board_cover_lower.step`](step/board_cover_lower.step) | 128 × 78 × 3，隔柱 13 |
-| 电池手柄本体 | [`step/battery_grip_body.step`](step/battery_grip_body.step) | Ø50 圆筒，16 × M3 上吊 |
-| 手柄底盖 | [`step/battery_grip_bottom_cap.step`](step/battery_grip_bottom_cap.step) | Ø50 × 4，3 × M3 |
+| 结构 A · 雷达活动托板 | [part_a_radar_plate.step](step/part_a_radar_plate.step) | 69 × 85 × 6 平板，侧面安装 M3 热熔螺母 |
+| 结构 B · 倾斜底座 | [part_b_tilt_base.step](step/part_b_tilt_base.step) | 基板 128 × 78 × 4，R45，0–40°；含前侧 D435i 托板 |
+| 开发板上盖板 | [board_cover_upper.step](step/board_cover_upper.step) | 板体 128 × 78 × 3，上隔柱高 10，带接口保护壁 |
+| 开发板下盖板 | [board_cover_lower.step](step/board_cover_lower.step) | 板体 128 × 78 × 3，下隔柱高 13，带加高护壁和局部缺口 |
+| 站立手柄 | [standing_handle_body.step](step/standing_handle_body.step) | Ø42 空心握把、104 × 88 支脚，总高 118 |
+| 电池手柄本体 | [battery_grip_body.step](step/battery_grip_body.step) | 外 Ø50、内 Ø44，容纳边长 36 × 高 78 的三角柱电池包 |
+| 电池手柄底盖 | [battery_grip_bottom_cap.step](step/battery_grip_bottom_cap.step) | Ø50 × 4，3 个 M3 安装孔 |
 
-每个 STEP 都是**单个实体、按打印姿态坐在 Z = 0、居中于原点**，可直接拖进切片软件。
-另有 [`step/board_and_bracket_all_parts.step`](step/board_and_bracket_all_parts.step)：
-除手柄外的四件排在一张 256 × 256 mm 打印床上；手柄两件另有
-`exports/battery_grip_256x256_print_plate.step`。
+表中的板厚不包含隔柱、围挡或耳板高度。B 件包含相机托板后的平面包络为 128 × 98。
+
+其他 STEP 文件：
+
+- [board_and_bracket_all_parts.step](step/board_and_bracket_all_parts.step)：四个共用件在 256 × 256 打印床上的排布，不含任何手柄。
+- [board_cover_upper_optA_topfacedown.step](step/board_cover_upper_optA_topfacedown.step)：上盖板顶面朝下方案。
+- [board_cover_upper_optB_topfaceup.step](step/board_cover_upper_optB_topfaceup.step)：上盖板顶面朝上方案。
+
+标准导出函数将六个电池手柄方案的独立件按指定姿态放到 Z = 0、XY 居中，并检查实体与 STEP 回读。
+**站立手柄和两个上盖板方向文件尚未接入标准导出脚本**；使用这些现有文件时需在切片软件中确认摆放与支撑。
+电池手柄本体和底盖另有双件排版生成入口，见[第 4 节](#4-当前文件与生成方式)。
 
 ## 快速开始
 
-```sh
-git clone <this repo> && cd mid360-tilt-bracket
-./scripts/fetch_mid360.sh                              # 取官方 MID-360 CAD（SHA-256 锁定）
-python -m pytest tests --ignore=tests/freecad           # 纯 Python 参数/运动学
-./scripts/run_freecad.sh scripts/build_step_package.py  # 重建 step/ 下全部 STEP
+直接打印可从上表选择 STEP。需要查看或修改参数时，先阅读[装配逻辑](#0-装配逻辑改尺寸前先读这一节)和[结构说明](#1-结构名称与装配关系)。
+
+在仓库根目录执行基础测试：
+
+```bash
+PYTHONPATH=src python -m pytest tests/test_dimensions.py tests/test_kinematics.py tests/test_battery_grip_parameters.py
 ```
 
-需要 FreeCAD 1.1.3（默认从 `~/Applications/` 的 AppImage 启动，可用
-`$FREECAD_APPIMAGE` 覆盖）。装配干涉校验还需要
-`renders/UAV_V3_compute_carrier_reference_clean.stl`——67 MB 的整机算料参考网格，
-体积过大未入库，须从原始整机 CAD 另行导出。缺它时件与件之间的校验照样跑，
-只有"件 × 开发板本体"这一类检查和整机 FCStd/STEP 导出会失败。
+基础测试需要 Python 和 pytest；渲染还使用 NumPy、Matplotlib、Pillow。
+仓库采用 `src/` 目录布局，直接运行 pytest 时需设置 `PYTHONPATH=src`。
 
-## 想用 AI 接着改这个项目？
+CAD 脚本通过 [scripts/run_freecad.sh](scripts/run_freecad.sh) 调用 FreeCAD 1.1.3。
+脚本默认使用原开发环境的 AppImage 路径；其他环境应通过 `FREECAD_APPIMAGE` 指定实际可执行文件：
 
-1. 先读 **[第 0 节 装配逻辑](#0-装配逻辑改尺寸前先读这一节)**——它讲清楚全局
-   只有一个 Z 基准、每个面怎么推导出来的、以及哪些约束会在改错时直接报错。
-2. 再读 **[第 3 节 术语对照](#3-术语对照)**——"上/下盖板"指开发板的上下，不是
-   雷达 A/B 的上下，这一点最容易搞混。
-3. 改几何前先改参数（`parameters.py` / `board_covers.py` / `battery_grip.py`），
-   再跑对应的窄范围测试，最后重新生成 STEP。测试里写死的绝对坐标是技术债，
-   遇到就改成从参数推导。
-4. 每个模块顶部的 docstring 说明它负责哪一个件、坐标系原点在哪。
+```bash
+export FREECAD_APPIMAGE=/path/to/FreeCAD.AppImage
+# 重建六个标准独立件和一个四件合并 STEP；会更新 step/ 对应文件
+./scripts/run_freecad.sh scripts/build_step_package.py
+```
 
----
+标准打印件导出不依赖传感器参考模型。整机装配和相关渲染还需以下资源：
 
-以下是设计细节与后续编辑约定。尺寸单位均为 **mm**，除非特别说明，
-打印材料为 **PLA**，紧固件为金属螺钉/螺柱。
+| 资源 | 用途与获取方式 |
+|---|---|
+| `vendor/livox/mid-360-asm.stp` | 官方雷达 CAD；运行 `./scripts/fetch_mid360.sh` 获取，导入时由 `official_sensor.py` 检查 SHA-256 |
+| `vendor/realsense/d435_mm.stl` | D435i 装配中使用的 D435 官方视觉参考网格；需另行准备，当前无下载脚本 |
+| `renders/UAV_V3_compute_carrier_reference_clean.stl` | 开发板整机参考网格；需从原始 CAD 另行导出，用于网格相交检查及整机展示 |
+
+以上参考资源未随当前仓库跟踪；缺失时，对应的整机导出、渲染及参考模型测试无法完成。
+AppImage 启动还依赖运行环境支持；本次文档核对环境中，默认启动方式报 FUSE 设备不可用。
 
 ## 0. 装配逻辑（改尺寸前先读这一节）
 
-**一句话：所有件的位置都是算出来的，不是填出来的。** 全局只有一个 Z 轴基准
-——开发板（UAV V3）的 PCB 安装面，`BoardCoverParameters.board_mounting_z_min = 10.5`
-与 `board_mounting_z_max = 23.1522`。其余每一个面都从它推导，所以改一个参数，
-它上下游的件会自动跟着走。
+开发板局部坐标系是盖板和手柄的装配基准：PCB 下、上安装面分别为
+`board_mounting_z_min = 10.5` 和 `board_mounting_z_max = 23.1522`。
++Y 为 D435i 所在的前侧，-Y 为后侧。下表列出当前默认参数推导出的主要高度。
 
-### Z 链（自上而下，全部为推导值）
+| 位置 | 推导方式 | 当前 Z |
+|---|---|---:|
+| 上盖板板底 | 23.1522 + 上隔柱 10 | 33.1522 |
+| 上盖板板顶 | 上盖板板底 + 板厚 3 | 36.1522 |
+| B 基板底面 | 上盖板板顶 + 支撑间距 20 | 56.1522 |
+| D435i 托板顶面 | B 基板底面 + 板厚 4 | 60.1522 |
+| 下盖板板顶 | 10.5 - 下隔柱 13 | -2.5 |
+| 下盖板板底 / 手柄法兰顶面 | 下盖板板顶 - 板厚 3 | -5.5 |
+| 两种手柄法兰底面 | -5.5 - 法兰厚 6 | -11.5 |
+| 电池手柄底盖外表面 | -5.5 - 6 - 14 - 99 - 4 | -128.5 |
+| 站立手柄支脚底面 | -5.5 - 6 - 6 - 88 - 12 - 6 | -123.5 |
 
-```
-雷达 MID-360        底面坐在 A 板顶面
-  结构 A 托板       绕 B 的转轴旋转 0..40°，转轴 y=38 z=-3（A 局部坐标）
-  结构 B 倾斜底座    底面 = 上盖板顶面 + BRACKET_STANDOFF_HEIGHT_MM(20)
-    └ D435i 托板     = B 底面 + b_base_thickness(4)，相机坐在这个面上
-  开发板上盖板       板底 = board_mounting_z_max + top_standoff_height(10)
-                    围挡从板底往下伸 top_rim_height(4)
-━━ 开发板 PCB ━━━━  board_mounting_z_max .. board_mounting_z_min
-  开发板下盖板       板顶 = board_mounting_z_min - bottom_standoff_height(13)
-                    围挡从板顶往上伸 bottom_rim_height(5.5)
-                    板底 = 板顶 - plate_thickness(3) = -5.5  ← 手柄基准
-  电池手柄法兰       顶面 = cover_underside_z(-5.5)，厚 flange_thickness(6)
-    空心锥根         高 root_height(14)，外 Ø50→Ø60，内 Ø44→Ø54
-    圆筒握把         长 tube_height(99)，内孔 Ø44 / 壁厚 3 / 外径 Ø50
-    手柄底盖         厚 cap_thickness(4)，最低点 -128.5
-```
+A 的转轴在 A 局部坐标中为 `y = 38, z = -3`，装配时映射到 B 的转轴。
+倾角从 0° 增加时，前侧转轴保持固定，**后端向上抬升**；当前整机装配默认角度为 0°。
 
-### 三条硬约束（写进了 `__post_init__`，违反直接报错）
+并非所有尺寸都自动联动：两种手柄各自保存 `cover_underside_z = -5.5` 与安装孔参数，
+接口保护壁也使用独立的 Z 坐标。修改盖板位置或孔距后，需同步核对手柄和护壁。
 
-1. **围挡不得碰 PCB**：`rim_height < standoff_height`。当前上余 6、下余 7.5。
-2. **B 底板风扇孔不得越过扇形耳板**：孔半宽 + 中心偏移 ≤ `b_inner_width/2`，
-   且四周至少留 3 mm 板料。当前朝耳板一侧最窄 4.75 mm。
-3. **手柄内孔必须装得下三角柱电池包**：`pack_circumdiameter < bore_diameter`。
-   当前电池包外接圆 Ø41.57，内孔 Ø44，单边余量 1.215。
+### 安装孔与紧固方式
 
-### 螺钉接口（谁攻丝、谁过孔）
+| 连接 | 数量 | 孔位与紧固方式 |
+|---|---:|---|
+| A ↔ B（转轴、锁紧） | 4 × M3 | B 侧 Ø3.4 通孔 / 3.4 宽弧槽；A 两侧共 4 个名义 Ø4 × 深 3 的热熔螺母底孔；螺钉参考模型为 M3×8 |
+| MID-360 ↔ A | 4 孔 | 孔距 36 × 48，A 上通孔 Ø3.5，保留官方安装孔位 |
+| B ↔ 上盖板 | 16 个安装位 | 两侧均为 Ø3.4 通孔，中间支撑间距 20；螺钉 / 螺柱为外购件 |
+| 上、下盖板 ↔ 开发板 | 每块 4 孔 | 孔距 100 × 70，Ø3.4 通孔，隔柱外径 Ø6 |
+| 任一种手柄 ↔ 下盖板 | 16 × M3 | 下盖板与法兰均为 Ø3.4 贯穿孔，由法兰底面螺母锁紧，法兰不攻丝 |
+| 电池手柄底盖 ↔ 本体 | 3 × M3×6 | 底盖 Ø3.4 通孔、Ø6.2 × 深 2.2 沉孔；本体立柱 Ø2.9 底孔攻 M3，名义啮合长 5 |
+| D435i ↔ B 托板 | 1 孔 | 托板 Ø6.8 通孔，对应 1/4-20 安装接口；螺杆参考直径 6.35 |
 
-| 连接 | 数量 | 通孔侧 | 攻丝侧 |
-|---|---:|---|---|
-| 结构 A ↔ 结构 B（转轴 + 锁紧） | 4 × M3 | B 耳板 Ø3.4 / 弧槽 3.4 宽 | A 侧面 Ø2.9，啮合 6~6.6 |
-| 结构 B ↔ 上盖板 | 16 × M3 | B 底板 Ø3.4 | 上盖板侧翼 |
-| 上/下盖板 ↔ 开发板 | 4 × M3 | 盖板四角 Ø3.4 | 开发板自带铜柱 |
-| 手柄 ↔ 下盖板 | **16 × M3** | 下盖板侧翼与法兰 **同径 Ø3.4** 贯穿 | 法兰底面 M3 螺母（法兰不攻丝） |
-| 手柄底盖 ↔ 手柄 | 3 × M3×6 | 底盖 Ø3.4 + Ø6.2 沉孔 | 内孔壁立柱 Ø6.5 高 5 |
+16 孔阵列为 `x = ±59，y = ±5 / ±15 / ±25 / ±35`。
+上下盖板与 B 调用 `board_covers.extension_hole_centers()`；两种手柄使用各自参数生成同样的默认阵列。
+四个板卡螺钉的轴线位于 `(±50, ±35)`，两种手柄法兰均留 Ø6.5 让位孔。
 
-孔位共享同一套坐标：盖板两侧各 8 个侧翼孔在 `x = ±59, y = ±5/±15/±25/±35`，
-由 `board_covers.extension_hole_centers()` 统一生成，结构 B 和手柄法兰都调它，
-所以**永远不可能对不上**。手柄法兰这 16 个孔是**与下盖板同径的 Ø3.4 贯穿孔**
-（`BatteryGripParameters.mount_hole_diameter`），不再攻丝；M3 从下盖板上方穿入、
-贯穿法兰后由法兰底面的螺母锁紧。
+### 参数约束与校验范围
 
-### 干涉校验怎么跑
+- 基础围挡高度必须小于对应隔柱高度；新增护壁另行检查端点坐标和缺口范围，基础围挡的余量不能代表完整护壁余量。
+- B 风扇孔必须留在耳板内侧，基板边缘至少留 3 mm 材料；当前靠耳板一侧最窄约 4.747。
+- 电池包外接圆必须小于握把内孔；当前 Ø41.57 对应 Ø44 内孔，单边余量约 1.215。
+- 站立手柄检查内孔、肩部与安装孔 / 让位孔的空间关系，以及观察孔与支脚边缘的距离。
 
-`build_board_bracket_assembly()` 把 10 个件建在同一个坐标系里，然后逐对算
-`shape.common(other).Volume`，任何一对不为 0 就抛异常。校验矩阵和数值落在
-`reports/UAV_V3_board_mid360_assembly.json`。
-
-### 想改设计时该动哪里
-
-| 想改 | 动这里 | 会自动跟随的件 |
-|---|---|---|
-| 雷达倾角范围 | `BracketParameters.working_angle_deg` | 弧槽、扇形轮廓、A 的行程 |
-| 盖板与开发板的间隙 | `top/bottom_standoff_height` | 盖板、结构 B、A、雷达、D435i 全部上下移动 |
-| 握把粗细 | `BatteryGripParameters.wall_thickness` | 外径、握持周长、底盖、立柱位置 |
-| 电池包尺寸 | `pack_side` / `pack_height` | 三角形外接圆、内孔下限校验 |
-| 手柄长度 | `tube_height` | 窗口高度、总高、底盖位置 |
-
-**不要**手工改几何函数里的绝对坐标。所有位置都应该是参数的函数；如果你发现
-必须写死一个数字，那说明缺一个参数。
+参数检查不能替代完整干涉检查。现有代码分别处理 A/B/雷达实体交叠、电池手柄相关交叠、
+相机网格相交，以及盖板与开发板参考网格的允许接触分类；实体交叠检查使用数值容差。
+`build_board_bracket_assembly()` 负责构建，`build_board_bracket_outputs()` 执行整机输出流程中的检查并写报告，
+并非对所有零件无差别做两两实体碰撞判断。站立手柄尚未纳入该整机流程。
 
 ## 1. 结构名称与装配关系
 
 ### 结构 A：雷达活动托板
 
-- 承载 Livox MID-360 雷达。
-- 是可绕前端转轴旋转的活动件。
-- A 托板上的两个耳板位于水平托板左右外缘、托板上方。
-- 雷达航插头位于抬升侧（后方圆弧端），航插方向相对原始方向旋转 180°。
-- A 与 B 的转轴端通过侧面螺钉连接；A 上四个 MID-360 安装孔属于例外孔位，不随通用 M3 化修改。
+A 是 69 × 85 × 6 的平板，**没有侧耳或凸台**。
+板中有 32 × 20 通风口及后侧让位开口；四个 Ø3.5 孔承载 MID-360。
+两侧转轴孔和锁紧孔采用 M3 热熔螺母底孔，不再采用原来的 PLA 侧面攻丝方案。
+雷达航插方向朝后侧抬升端。
 
-### 结构 B：雷达固定底座/倾斜底座
+### 结构 B：雷达固定底座与 D435i 托板
 
-- 固定在开发板上盖板上，是 A 的支撑与倾角调节件。
-- B 有水平底板、左右两块扇形耳板和前端 D435i 相机托板。
-- 扇形耳板在外侧，夹持 A 的耳板。
-- 扇形耳板圆心位于前方/转轴区域，后方圆弧端用于抬升和锁紧。
-- 当前工作倾角为 **0～40°**；前端向上旋转，不是向下旋转。
-- B 扇形耳板不挖孔；滑轨/锁紧结构按现有模型保留。
+B 的 128 × 78 × 4 基板上有两块扇形耳板，夹持 A 平板两侧。
+锁紧弧半径 R45，耳板外轮廓 R53，工作范围 0–40°；外侧轨道凹槽深 1。
+基板开 60 × 41、R3 的风扇孔，并保留耳板根部加强筋。
+
+D435i 托板与 B 一体生成，位于 +Y 前侧，尺寸 92 × 20 × 4、平面圆角 R4。
+托板中部开 Ø6.8 安装通孔；耳板在相机后下角处有局部避让。
+这部分不需要单独打印，调整后需结合相机参考网格复核空间。
 
 ### 开发板上盖板与下盖板
 
-- 上盖板：覆盖开发板上方，板厚 3；上侧风扇开矩形孔。
-- 下盖板：覆盖开发板下方，板厚 3；底部风扇和 IMU 各开矩形孔。
-- 两块盖板分别通过四角隔柱与开发板连接。
-- 当前下盖板内侧围挡高度为 **8**（最近一次由 6 增加 2）；上盖板围挡高度为 **2**。
-- 围挡当前恢复为与盖板平面的直角连接；不要擅自重新加入圆角或减料式 R1。
-- 围挡壁厚 1.5，外侧包到四角隔柱最外缘；盖板外形基准为 108×78，围挡外包络约 106×76（以源代码实际几何为准）。
+两块盖板的基础板区参数为 108 × 78，两端各延伸 10，最终板体外形为 **128 × 78 × 3**。
+安装孔距 100 × 70，隔柱外径 Ø6；上隔柱高 10，下隔柱高 13。
+围挡壁厚 1.5，外包络约 106 × 76，与板体为直角连接。
 
-### D435i 托板
+基础围挡分别为上盖向下 4、下盖向上 5.5。在此基础上，当前模型增加接口保护壁：
 
-- 属于 B 的前端附属打印结构，不是雷达 A/B 的一部分。
-- 当前尺寸约 92×20，外侧连接处为 R4 圆角。
-- 托板中部预留 D435i 底部安装孔，安装后不得与雷达倾斜结构干涉；若修改 B，应重新检查相机空间。
+| 区域 | 当前保护壁范围（开发板局部坐标） |
+|---|---|
+| 上盖 -Y 后侧 USB-C 段 | x = 21…46，向下到 Z = 27.3 |
+| 上盖 -Y 其余段、+X 侧 | 向下到 Z = 28.7 |
+| 上盖 -X 侧 | 向下到 Z = 28.5 |
+| 上盖 +Y 前侧 | 保留基础围挡，底部 Z = 29.1522；该侧额外护壁参数 29.33 不产生加深 |
+| 下盖四周 | 向上到 Z = 9.45，相对板顶总高 11.95 |
+| 下盖 -X 接口缺口 | y = -3.5…7.0 范围内，壁顶降至 Z = 5.45，相对板顶高 7.95 |
 
-### 电池手柄（手持握把）
+保护壁端点依据板卡接口空间设置；+Y 前侧下方的较高元件限制了上盖围挡继续加深。
+下盖 -X 的局部降低段用于露出接口，其他区域保留全高护壁。
+当前上、下基础围挡参数为 4 和 5.5，旧文档中的 2 和 8 已不适用。
 
-- 用 **16 颗 M3** 吊装在**下盖板底面**（Z = -5.5）下方，螺钉用满下盖板两侧各 8 个 Ø3.4 侧翼通孔（x = ±59，y = ±5/±15/±25/±35）。
-- 顶部法兰与下盖板同外形：128×78，R4 圆角，**厚度均一 6 mm，两侧不加厚**；16 个 Ø3.4 贯穿孔与下盖板同径，螺钉自由穿过、由法兰底面的 M3 螺母锁紧，**法兰不再攻丝**。
-- **手柄本身没有顶盖**：内孔直接贯穿法兰，下盖板底面就是电池腔顶。开发板底部风扇因此直接向下吹进内孔、吹到电池组上。
-- 因为上面这一点，法兰上**不再开风扇孔和 IMU 让位孔**，手柄也就不必为散热让位、居中放在盖板正下方。
-- 握把是**圆筒**：内孔 Ø44、壁厚 3、外径 Ø50（握持周长 157.1 mm），圆筒段长 99。
-- 上端 14 mm 是**空心锥形过渡**：外 Ø50→Ø60，内 Ø44→Ø54，壁厚恒定 3。这个喇叭口同时是风扇的导流罩——下盖板风扇孔有 **100%** 的面积直接通进内孔。
-- 内孔装一节**实心三角柱电池包**：底面等边三角形**边长 36**、高 78（外接圆 Ø41.57，内孔单边余量 1.215）；圆腔内电池可自由旋转，对应 DC 12 V 输出。
-- 电池从圆筒**底面开口**装入，**坐在三根立柱顶面上**（不坐底）：底盖用 3 颗 **M3×6** 拧进内孔壁上的三根 Ø6.5 × 高 5 立柱（轴线半径 20.0，30°/150°/270°），并整根攻穿——所以 5 mm 就是螺纹啮合长度。电池抬高后底盖内侧留出 5 mm 空腔，正好给 DC 引线盘线。
-- 圆筒背面（-Y）开一个 14×13 小窗口引出两条 DC 12 V 线（供电 + 充电）。
-- 法兰在四角板卡安装螺钉位（±50, ±35）留 Ø6.5 让位孔，装上手柄后仍能操作那四颗螺钉。
-- 下盖板的 IMU 孔（14×18 @ X=33.7）被 6 mm 法兰基本盖住。**用户已确认该孔下方无元件伸出，不需要补让位坑**；扩腔后腔口边缘扫到孔内角一小条，报告里的 `imu_opening_open_fraction ≈ 0.007` 是预期值，不是缺陷。
+### 站立手柄
 
+站立手柄是一体件：顶部安装法兰、短肩部、空心圆筒、扩展过渡和矩形支脚连续连接。
+沿用电池手柄的 128 × 78 × 6 法兰及 16 孔接口，两种手柄可在下盖板处替换。
 
+握持圆筒外 Ø42、内 Ø35、壁厚 3.5、直段长 88。
+上方肩部高 6，从 88 × 58、R15 的轮廓过渡到圆筒，并避开法兰紧固件。
+下方高 12 的过渡连接 104 × 88 × 6、R24 的支脚；法兰顶面至支脚底面总高 118。
 
-
-
-## 2. 当前有效主要参数
-
-### 雷达倾斜结构
-
-| 项目 | 当前值 |
-|---|---:|
-| A 托板宽 × 深 × 厚 | 69 × 85 × 6 |
-| MID-360 安装孔距 | 36 × 48 |
-| A-B 侧面攻丝深度 | 6 |
-| B 底板宽 × 深 × 厚 | 128 × 78 × 4 |
-| B 内侧宽度 | 69.8 |
-| B 扇形锁紧半径 | R45 |
-| B 扇形外轮廓半径 | R53 |
-| 工作角度 | 40° |
-| 滑轨宽度 | 3.4 |
-| 滑轨两端余量 | 1.5 |
-| 扇形耳板减薄 | 外侧减薄 1；内侧材料不减薄 |
-| B 底板安装孔 | Ø3.4 通孔（M3 间隙孔） |
-| D435i 托板 | 92 × 20，R4 |
-
-### 开发板盖板
-
-| 项目 | 当前值 |
-|---|---:|
-| 盖板长度 × 宽度 | 108 × 78 |
-| 盖板厚度 | 3 |
-| 四角隔柱外径 | Ø6 |
-| 上隔柱高度 | 8 |
-| 下隔柱高度 | 13 |
-| 通用 M3 通孔 | Ø3.4 |
-| M3 攻丝底孔 | Ø2.9（仅在需要攻丝的实体中使用） |
-| 上盖风扇孔 | 60 × 41，R2 |
-| 下盖风扇孔 | 24 × 24，R3 |
-| 下盖 IMU 孔 | 14 × 18，R1 |
-| 上盖围挡 | 高 2，厚 1.5，直角根部 |
-| 下盖围挡 | 高 8，厚 1.5，直角根部 |
-
-说明：所有 PLA 打印件的孔位已按 M3 方案处理，**A 与 MID-360 连接的四个安装孔除外**。不要把航插、雷达、开发板、D435i 参考模型或螺钉误当成 PLA 打印件。
+支脚前侧有 Ø5 观察孔，轴线为 `x = 0, y = 34`，距 +Y 外边缘 10。
+内部是空腔，底部保留支脚实体；没有电池包定位结构或可拆底盖。
+源码入口为 `standing_handle.make_standing_handle()`，尚无专用构建脚本或专用回归测试。
 
 ### 电池手柄
 
-| 项目 | 当前值 |
-|---|---:|
-| 顶部法兰 长 × 宽 × 厚 | 128 × 78 × 6，R4，**厚度均一** |
-| 与下盖板连接螺钉 | **16 × M3**，x=±59，y=±5/±15/±25/±35 |
-| 法兰安装孔 | Ø3.4 贯穿，与下盖板同径（M3 + 法兰底面螺母） |
-| 板卡螺钉让位孔 | Ø6.5 @ (±50, ±35) |
-| 空心锥形过渡 | 高 14；外 Ø50→Ø60，内 Ø44→Ø54 |
-| 风扇孔通气率 | 100%（568.3 / 568.3 mm²） |
-| 圆筒 内孔 / 壁厚 / 外径 | Ø44 / 3 / **Ø50**（周长 157.1） |
-| 圆筒段长度 | 99（+ 锥根 14，法兰下长 113） |
-| 电池 | 实心三角柱电池包，边长 36 × 高 78 |
-| 电池包外接圆 | Ø41.57（内孔单边余量 **1.215**） |
-| 电池腔 | Ø44 × 119，上端由下盖板封口，下端开口装电池 |
-| 电池座位 | 三根立柱顶面（Z = -119.5），底盖内侧留 5 mm 盘线腔 |
-| 电池上方风扇腔 | 36 |
-| 底盖螺柱 | 3 × Ø6.5，轴线半径 20.0，30°/150°/270°，**高 5（攻穿，啮合 5）** |
-| 背部 DC 线窗口 | 14 × 13，R2，中心 Z = -34.5（比居中再远离法兰 2 mm） |
-| 底盖 厚 | 4，Ø6.2 × 2.2 沉孔，螺钉 M3×6 |
-| 手柄总高（含底盖） | 123（Z = -5.5 → -128.5） |
-| 估重（PLA 1.24） | 本体 117.7 g + 底盖 9.4 g |
-| 打印姿态 | 本体法兰朝下（高 119）；底盖外表面朝下（高 4） |
+电池手柄由本体和可拆底盖组成。法兰厚 6、外形 128 × 78，16 个 Ø3.4 通孔以螺母锁紧；
+四个 Ø6.5 孔为板卡安装螺钉让位。握把外 Ø50、内 Ø44、壁厚 3，圆筒段长 99。
 
+上方高 14 的空心锥根从外 Ø50 过渡到 Ø60，内径从 Ø44 过渡到 Ø54。
+内孔贯穿法兰，由下盖板封住顶部，底部风扇可朝内腔送风；法兰没有独立的风扇或 IMU 开孔。
 
-### 整机装配与爆炸图
+电池参考为边长 36、高 78 的等边三角柱包，外接圆约 Ø41.57。
+电池从底部装入，坐在三根底盖立柱顶面：底部 Z = -119.5，顶部 Z = -41.5，
+上方至下盖板留 36 的空腔，底盖内侧留约 5 的盘线空间。
 
-- `models/UAV_V3_board_mid360_assembly.FCStd` 包含 **10 个产品**：开发板参考 CAD、
-  上盖板、下盖板、结构 B、结构 A、官方 MID-360、官方 D435i 参考、
-  **电池手柄本体、手柄底盖、三角柱电池包参考**。
-- 同内容的 `exports/UAV_V3_board_mid360_assembly.step` 因为内嵌 25 万面的开发板参考壳
-  会有 **305 MB**，**默认不留在磁盘上**；需要跟外部交接时再跑
-  `build_board_bracket_assembly.py` 重新导出（约 12 分钟）。日常看图用 FCStd。
-- 校验报告 `reports/UAV_V3_board_mid360_assembly.json` 增加了 `battery_grip_included: true`
-  以及手柄对下盖板/上盖板/A/B/雷达/D435i/底盖的干涉体积（全为 0）和
-  `grip_carrier_reference_z_gap_mm`（手柄顶面到开发板 CAD 底面还有 5.5 mm）。
-- 网页用爆炸动画：`renders/handheld_stack_exploded.mp4`（H.264，约 0.1 MB，
-  装配↔爆炸无缝循环）。按用户要求**只出 MP4**，不再生成 PNG/SVG/GIF。
-- 视角固定在 elev 16° / **azim 118°**：D435i 装在结构 B 的 +Y 前端托板上，
-  相机必须放在 +Y 一侧，否则结构 B 会把它整个挡住。
-- 爆炸位移不是手填的：`_explosion_offsets` 用各零件真实包围盒，从开发板往两侧
-  逐个让出 `EXPLODE_GAP_MM`（24 mm），所以某个零件变大时不会悄悄叠到邻件上。
+三根立柱直径 Ø6.5、高 5，轴线半径 20，角度 30° / 150° / 270°；
+Ø2.9 孔用于攻 M3 螺纹。底盖厚 4，用 3 颗 M3×6 固定。
+后侧 -Y 出线窗口为 **18 × 17、R2**，中心 Z = -36.5；上沿距锥根 2.5，
+下沿按既有设计伸入电池包的高度范围。
+
+下盖板 IMU 孔仍大部分被法兰覆盖，既有设计已确认该孔下方无元件伸出，不另加让位坑。
+风扇孔开放面积和 IMU 孔剩余开放面积由 `validate_grip_cover_assembly()` 计算；
+改动内腔后应重新核验，不将旧报告比例当作固定参数。
+
+## 2. 当前有效主要参数
+
+以下按当前源码默认值汇总，Z 坐标均为开发板局部坐标（A 的局部转轴除外）。
+
+| 部件 | 参数 | 当前值 |
+|---|---|---|
+| A | 板体 / MID-360 孔距 / 通孔 | 69 × 85 × 6 / 36 × 48 / Ø3.5 |
+| A | 侧面热熔螺母底孔 | 名义 Ø4 × 深 3，两侧共 4 个 |
+| B | 基板 / 内侧宽度 / 耳板厚 | 128 × 78 × 4 / 69.8 / 4 |
+| B | 锁紧半径 / 外轮廓半径 / 行程 | R45 / R53 / 0–40° |
+| B | 弧槽宽 / 两端延长量 / 外侧凹槽深 | 3.4 / 每端 1.5 / 1 |
+| B | 风扇孔 / 相机托板 / 相机孔 | 60 × 41 R3 / 92 × 20 R4 / Ø6.8 |
+| 盖板 | 最终板体 / 安装孔距 | 128 × 78 × 3 / 100 × 70 |
+| 盖板 | 上、下隔柱高 / 隔柱外径 | 10、13 / Ø6 |
+| 盖板 | 上、下基础围挡高 / 壁厚 | 4、5.5 / 1.5；护壁端点见第 1 节 |
+| 上盖 | 风扇孔 | 60 × 41，R2，中心 (-0.153, 6.830) |
+| 下盖 | 风扇孔 | 24 × 24，R3，中心 (-11.3610, -2.3275) |
+| 下盖 | IMU 孔 | 14 × 18，R1，中心 (33.6671, -2.5159) |
+| 两种手柄 | 法兰 / 安装通孔 / 螺钉让位孔 | 128 × 78 × 6，R4 / 16 × Ø3.4 / 4 × Ø6.5 |
+| 站立手柄 | 外径 / 内径 / 壁厚 / 直段长 | Ø42 / Ø35 / 3.5 / 88 |
+| 站立手柄 | 肩部 / 下方过渡高度 | 6 / 12 |
+| 站立手柄 | 支脚 / 观察孔 / 总高 | 104 × 88 × 6，R24 / Ø5 / 118 |
+| 电池手柄 | 外径 / 内径 / 壁厚 / 直段长 | Ø50 / Ø44 / 3 / 99 |
+| 电池手柄 | 锥根高 / 顶端外径、内径 | 14 / Ø60、Ø54 |
+| 电池手柄 | 电池包边长、高 / 单边装配余量 | 36、78 / 约 1.215 |
+| 电池手柄 | 出线窗口 / 中心 Z | 18 × 17，R2 / -36.5 |
+| 电池手柄 | 底盖厚 / 沉孔 / 总高（含底盖） | 4 / Ø6.2 × 深 2.2 / 123 |
 
 ## 3. 术语对照
 
-- **抬升端/后方圆弧端**：雷达后侧向上抬起的一端，航插头所在侧。
-- **转轴端/圆心端**：B 扇形耳板前方的旋转中心区域，A 托板前边连接此处。
-- **锁紧端**：后方圆弧和滑轨末端，用螺钉锁紧角度。
-- **扇形耳板**：B 两侧的弧形侧板；当前只 B 保持扇形，A 为短耳板/平板耳板。
-- **夹持 A**：B 扇形耳板位于外侧，A 耳板夹在两侧之间。
-- **上盖板/下盖板**：相对于开发板的上方/下方盖板，不是雷达 A/B 的上下件。
-- **围挡**：盖板内侧四周的连续薄壁，用于限制开发板位置；隔柱位于围挡四角。
-- **隔柱**：盖板内侧四角的圆柱支撑，不等同于螺钉头凸台。
-- **通孔**：螺钉自由穿过的孔，M3 当前采用 Ø3.4。
-- **攻丝底孔**：打印后用于攻 M3 螺纹的预留孔，当前采用 Ø2.9。手柄法兰除外——其安装孔是 Ø3.4 贯穿孔，不攻丝。
-- **薄壳/局部凸台**：曾经的设计思路；当前盖板为平板加围挡、B 为现有实心结构，不要自行恢复旧凸台。
-- **R1/R4/R45/R53**：分别表示 1、4、45、53 mm 半径。R1 围挡根部圆角已被用户否决并恢复为直角。
+- **结构 A / B**：A 是承载雷达的活动平板；B 是带扇形耳板和相机托板的固定底座。
+- **前侧 / 后侧**：+Y 为相机所在的前侧、转轴侧；-Y 为雷达航插所在的后侧、抬升侧。
+- **上盖板 / 下盖板**：相对于开发板而言，与 A/B 的命名无关。
+- **基础围挡 / 保护壁**：基础围挡由围挡高度参数控制，保护壁是针对接口位置增加或局部降低的部分。
+- **隔柱 / 耳板**：隔柱连接盖板与板卡；扇形耳板位于 B 两侧，用于支承与锁紧 A。
+- **通孔 / 热熔螺母底孔 / 攻丝底孔**：分别用于螺钉自由穿过、安装金属螺母、在 PLA 中攻螺纹，不能互换。
+- **站立手柄 / 电池手柄**：共用下盖板接口的两种方案；前者有一体支脚，后者容纳电池并配可拆底盖。
+- **参考模型**：雷达、相机、板卡和电池包的几何表示，用于装配检查和显示，不属于打印交付件。
 
 ## 4. 当前文件与生成方式
 
-主要源文件：
+### 源码与职责
 
-- `src/bracket/board_covers.py`：开发板上、下盖板参数和几何。
-- `src/bracket/freecad_geometry.py`：雷达 A/B 几何。
-- `src/bracket/parameters.py`：雷达倾斜结构参数。
-- `src/bracket/print_plate.py`：四个 PLA 件的打印床排布与 STEP 导出。
-- `src/bracket/step_package.py`：每件一个 STEP + 除手柄外四件的合并 STEP。
-- `src/bracket/battery_grip.py`：电池手柄参数、几何、与下盖板的装配和校验。
-- `src/bracket/exploded_view.py`：整机结构爆炸动画（MP4）。
-- `scripts/build_print_plate.py`：调用 FreeCAD 生成打印 STEP。
-- `scripts/build_battery_grip.py`：生成手柄本体 / 底盖 / 手柄+下盖板装配 / **打印床 STEP**（只出 STEP 与 FCStd，不出 STL）。
-- `scripts/build_exploded_view.py`：生成结构爆炸动画 MP4。
-- `scripts/build_step_package.py`：生成 `step/` 下的全部交付 STEP。
+| 文件 | 职责 |
+|---|---|
+| [parameters.py](src/bracket/parameters.py)、[freecad_geometry.py](src/bracket/freecad_geometry.py) | A/B 参数及几何，含 D435i 托板 |
+| [board_covers.py](src/bracket/board_covers.py) | 上下盖板、隔柱、基础围挡及接口保护壁 |
+| [battery_grip.py](src/bracket/battery_grip.py) | 电池手柄、底盖、电池包参考及相关校验 |
+| [standing_handle.py](src/bracket/standing_handle.py) | 站立手柄参数及一体几何 |
+| [assembly.py](src/bracket/assembly.py) | 雷达支架装配、多个倾角检查及输出 |
+| [board_bracket_assembly.py](src/bracket/board_bracket_assembly.py) | 含电池手柄的整机装配与参考模型检查 |
+| [step_package.py](src/bracket/step_package.py) | 六个标准独立 STEP + 四件合并 STEP |
+| [print_plate.py](src/bracket/print_plate.py) | 四个共用件的 256 × 256 打印床排布 |
+| [exploded_view.py](src/bracket/exploded_view.py) | 电池手柄方案的爆炸动画 |
 
-手柄打印文件：`exports/battery_grip_256x256_print_plate.step`——两个打印件已摆成打印姿态、坐在 Z=0 上，直接拖进切片软件即可。本体**法兰朝下**（首层 128×78，锥根向上收窄自支撑，内孔开口朝上）；底盖**外表面朝下**（沉孔朝上，零悬空）。零件最小间隔 10.0，整体在 256×256 床内。
+### 输出与覆盖范围
 
-### 目录职责与可再生性
+- `step/`：现有打印交付件。标准构建脚本输出表中除站立手柄外的六个独立件，以及 `board_and_bracket_all_parts.step`，共 7 个文件。站立手柄及上盖板 optA/optB 不由该脚本更新。
+- `exports/all_PLA_parts_256x256_print_plate.step`：由 `build_print_plate.py` 生成，包含四个共用件。
+- `exports/battery_grip_256x256_print_plate.step`：由 `build_battery_grip.py` 生成，包含本体和底盖；本体法兰朝下，两件由代码旋转并放到 Z = 0。具体悬空面与支撑设置需在切片中确认。
+- `models/`、`exports/`、`reports/`：分别保存模型、导出物和校验报告；相关生成物受 `.gitignore` 管理。
+- `renders/handheld_stack_exploded_preview.png`：README 使用的已跟踪静态预览。
+- `renders/handheld_stack_exploded.mp4`：保留并已跟踪的动画文件，README 不嵌入视频。预览图是单独截取的首帧，动画脚本不会同步刷新它。
 
-| 目录 | 内容 | 是否可由本仓库代码再生 |
-|---|---|---|
-| `src/bracket/` | 参数与 CSG 几何，唯一真值 | — 源代码 |
-| `scripts/` | FreeCAD 构建/渲染入口 | — 源代码 |
-| `tests/`、`tests/freecad/` | 纯 Python 与 FreeCAD 几何回归 | — 源代码 |
-| `models/`、`exports/`、`reports/` | FCStd / STEP / STL / 校验 JSON | 可，全部由 `scripts/build_*.py` 生成；未入库 |
-| `step/` | **交付 STEP：每件一个 + 除手柄外的合并件** | 可，由 `build_step_package.py` 生成；**已入库** |
-| `renders/*.png` | 评审图 | 可，由 `render_model.py`、`build_board_covers.py` 生成 |
-| `renders/handheld_stack_exploded.mp4` | 网页用结构爆炸动画 | 可，由 `build_exploded_view.py` 生成 |
-| `renders/UAV_V3_compute_carrier_reference_clean.stl` | 整机算料参考网格，4 个模块读取它 | **不可**，只能从原始整机 CAD 重新导出 |
-| `vendor/livox/mid-360-asm.stp` | 官方雷达 CAD，SHA-256 锁定 | 可，`scripts/fetch_mid360.sh` |
-| `vendor/realsense/` | 官方 D435 参考网格 | 已跟踪 |
-| `手持结构/` | 早期手持方案的输入 STEP，**当前代码已不读取**，仅作原始 CAD 留存 | 不可再生（已跟踪） |
-| `docs/superpowers/` | 历史 spec/plan，**已被本文件取代** | — 历史记录 |
+整机输出入口 `build_board_bracket_assembly.py` 使用电池手柄方案，包含 6 个打印件和
+开发板、MID-360、D435i、电池包这 4 类参考产品；不包含站立手柄或紧固件模型。
+它会写 FCStd、整机 STEP 和 JSON 报告，未实现“默认不保留 STEP”的行为。
+参考网格会显著增加导出体积和运行时间，实际结果取决于输入模型。
 
-`renders/UAV_V3_compute_carrier_reference_clean.stl`（67 MB）因体积过大不入 git，但它是装配干涉校验的必需输入，请另行备份。
+动画同样沿用电池手柄整机，视角为 elev 16° / azim 118°，
+爆炸间距按包围盒及 `EXPLODE_GAP_MM = 24` 计算。
+重新生成动画需要上述三个参考资源和 ffmpeg；现有预览与动画不代表当前全部结构的最新状态。
 
-当前一次性打印文件：
+### 构建与检查命令
 
-`exports/all_PLA_parts_256x256_print_plate.step`
-
-该文件只包含四个实体：B 底座、上盖板、下盖板、A 雷达托板；采用左右两列排布，零件最小间隔不小于 8。最近一次 FreeCAD 检查结果为 4 个有效实体，整体包围盒约 242×221.5×54.1，完整位于 256×256 mm 打印范围内。
-
-### 构建与测试命令
+以下为后续维护入口；构建命令会写入对应输出目录。
 
 ```bash
-python -m pytest tests --ignore=tests/freecad     # 纯 Python 参数/运动学/渲染，70 项
-./scripts/run_freecad.sh tests/freecad/test_print_plate.py   # FreeCAD 测试须逐文件运行
-./scripts/run_freecad.sh tests/freecad/test_battery_grip.py  # 电池手柄几何校验
-./scripts/run_freecad.sh scripts/build_step_package.py       # 生成 step/ 下全部交付 STEP
-./scripts/run_freecad.sh tests/freecad/test_step_package.py  # 交付 STEP 校验
-./scripts/run_freecad.sh scripts/build_print_plate.py        # 生成打印床 STEP
-./scripts/run_freecad.sh scripts/build_board_covers.py       # 生成盖板包
-./scripts/run_freecad.sh scripts/build_board_bracket_assembly.py  # 生成整机装配
-./scripts/run_freecad.sh scripts/build_battery_grip.py       # 生成电池手柄 + 下盖板装配 + 打印床
-./scripts/run_freecad.sh scripts/build_exploded_view.py      # 生成爆炸动画 MP4
-./scripts/run_freecad.sh tests/freecad/test_exploded_view.py # 爆炸图逻辑校验
+# 参数与运动学：不依赖 FreeCAD 或外部参考模型
+PYTHONPATH=src python -m pytest tests/test_dimensions.py tests/test_kinematics.py tests/test_battery_grip_parameters.py
+
+# 包含渲染的测试；其中部分测试会调用 FreeCAD 并读取 MID-360 参考 CAD
+PYTHONPATH=src python -m pytest tests --ignore=tests/freecad
+
+# FreeCAD 几何与标准交付检查（逐文件运行）
+./scripts/run_freecad.sh tests/freecad/test_part_geometry.py
+./scripts/run_freecad.sh tests/freecad/test_board_covers.py
+./scripts/run_freecad.sh tests/freecad/test_battery_grip.py
+./scripts/run_freecad.sh tests/freecad/test_step_package.py
+./scripts/run_freecad.sh tests/freecad/test_print_plate.py
+
+# 重建标准打印件与排版
+./scripts/run_freecad.sh scripts/build_step_package.py
+./scripts/run_freecad.sh scripts/build_print_plate.py
+./scripts/run_freecad.sh scripts/build_battery_grip.py
+
+# 盖板包与整机输出、动画：先准备对应参考资源和运行依赖
+./scripts/run_freecad.sh scripts/build_board_covers.py
+./scripts/run_freecad.sh scripts/build_board_bracket_assembly.py
+./scripts/run_freecad.sh scripts/build_exploded_view.py
 ```
 
-`scripts/run_freecad.sh` 只接受**文件路径**（内部固定追加 `--pass "$@"` 并交给 `runpy`），因此 `-m pytest` 这类写法会失败；`tests/freecad/` 下每个测试文件都自带 `__main__` 入口。
+`run_freecad.sh` 接受 Python **脚本路径**，通过 `--console` 和 `--pass` 交给 `runpy`；
+不能把 `-m pytest` 当作脚本路径传入。测试数量以实际收集结果为准。
+目前没有覆盖站立手柄及 optA/optB 导出的标准回归入口，也未在本次文档整理中重建或验证整机 CAD。
 
-## 5. 继续编辑时的约定
+## 5. 后续修改时的约定
 
-1. 先确认修改对象是 A、B、上盖板还是下盖板，避免把“上/下”理解成雷达倾斜结构的上下。
-2. 修改尺寸后优先更新对应参数和窄范围几何测试，再重新生成 FCStd/STEP。
-3. 保留 PLA 打印件与参考模型的区别；参考模型只用于装配检查，不应导出到打印 STEP。
-4. 不要使用 FreeCAD 的 `-q` 参数；本项目脚本使用 `--console` 和 `--pass`。
-5. 旧版本中的 M5、R40/R48、R85/R93、15°、30°、45°等方案均为历史方案，除非用户明确要求回退，否则以本 README 和当前源代码为准。
+1. 先确认修改对象和手柄方案；结构参数分别位于 `parameters.py`、`board_covers.py`、`battery_grip.py`、`standing_handle.py`。
+2. 以源码参数、几何实现和相关测试共同核对当前设计；更新参数后检查上下游接口，尤其是独立保存的手柄基准、孔距和保护壁 Z 坐标。
+3. 保留 A 的平板结构、热熔螺母接口、盖板直角围挡及手柄法兰通孔的设计区别；不要把旧参数混回当前方案。
+4. 结构变更后应重新生成受影响的交付件，并区分打印件与外购参考件；未经刷新，旧图片或历史报告不能证明新结构已验证。

@@ -49,7 +49,7 @@ def test_derived_z_chain_stacks_flange_root_tube_and_cap() -> None:
     assert (p.pack_z0, p.pack_z1) == (-119.5, -41.5)
     assert (p.cap_z0, p.total_height) == (-128.5, 123.0)
     assert p.plenum_height == pytest.approx(36.0)
-    assert p.window_center_z == pytest.approx(-34.5)
+    assert p.window_center_z == pytest.approx(-36.5)
 
 
 def test_bore_has_no_top_lid_so_the_cover_closes_it() -> None:
@@ -151,17 +151,21 @@ def test_three_cap_posts_fuse_into_the_bore_wall() -> None:
         replace(p, post_height=3.0)
 
 
-def test_window_keeps_a_plain_wall_band_above_the_pack() -> None:
-    """Catch a pack so tall the DC-lead window loses its plain wall."""
+def test_dc_window_dips_into_the_pack_band_but_stays_on_the_tube() -> None:
+    """Catch a window moved off the plain tube wall or into the cone."""
 
     p = BatteryGripParameters()
-    # The band between the pack top and the cone fits the window with 2.5 mm
-    # of plain wall above it and 0.5 mm below.
-    assert p.root_z0 - p.pack_z1 == pytest.approx(16.0)
-    assert p.root_z0 - p.pack_z1 > p.window_height
-    top_gap = p.root_z0 - (p.window_center_z + p.window_height / 2.0)
-    assert top_gap == pytest.approx(p.window_top_gap)
-    bottom_gap = (p.window_center_z - p.window_height / 2.0) - p.pack_z1
-    assert bottom_gap == pytest.approx(0.5)
-    with pytest.raises(ValueError, match="no plain wall band"):
-        replace(p, pack_height=95.0)
+    top_edge = p.window_center_z + p.window_height / 2.0
+    bottom_edge = p.window_center_z - p.window_height / 2.0
+    # The enlarged 18 x 17 mm window keeps window_top_gap of plastic below
+    # the conical root on its top edge...
+    assert p.root_z0 - top_edge == pytest.approx(p.window_top_gap)
+    assert top_edge < p.root_z0
+    # ...reaches down into the pack's vertical band by design...
+    assert bottom_edge < p.pack_z1
+    # ...and still stays on the plain tube wall, above the open tube mouth.
+    assert bottom_edge > p.grip_z0
+    with pytest.raises(ValueError, match="window is wider than the bore"):
+        replace(p, window_length=48.0)
+    with pytest.raises(ValueError, match="window leaves the tube wall"):
+        replace(p, window_height=200.0)

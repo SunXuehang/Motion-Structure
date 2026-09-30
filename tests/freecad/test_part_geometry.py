@@ -114,28 +114,25 @@ def test_part_a_preserves_all_four_mid360_mounting_holes_at_3_5_mm() -> None:
         assert_fully_solid(a, probe)
 
 
-def test_part_a_has_six_mm_deep_pivot_side_pilot_holes() -> None:
-    """Catch a missing pivot pilot, wrong axis height, or excessive depth."""
+def test_part_a_pivot_insert_holes_are_4mm_by_3mm_deep() -> None:
+    """Catch a missing pivot insert hole, wrong axis height, or wrong size."""
 
     a = make_part_a(BracketParameters())
-    assert_fully_void(a, x_cylinder(-34.5, 6.0, 38.0, -3.0, 1.44))
-    assert_fully_void(a, x_cylinder(28.5, 6.0, 38.0, -3.0, 1.44))
-    assert_fully_solid(a, x_cylinder(-34.4, 5.8, 38.0, -1.49, 0.04))
-    assert_fully_solid(a, x_cylinder(28.6, 5.8, 38.0, -1.49, 0.04))
-    assert_fully_solid(a, x_cylinder(-27.5, 0.5, 38.0, -3.0, 0.3))
-    assert_fully_solid(a, x_cylinder(27.0, 0.5, 38.0, -3.0, 0.3))
+    assert_fully_void(a, x_cylinder(-34.5, 2.6, 38.0, -3.0, 1.9))
+    assert_fully_void(a, x_cylinder(31.9, 2.6, 38.0, -3.0, 1.9))
+    # The blind hole stops 3 mm in: the plate centre stays solid.
+    assert_fully_solid(a, x_cylinder(-31.0, 0.5, 38.0, -3.0, 0.3))
+    assert_fully_solid(a, x_cylinder(30.5, 0.5, 38.0, -3.0, 0.3))
 
 
-def test_part_a_has_seven_mm_deep_lock_side_pilot_holes() -> None:
-    """Catch lock holes too shallow for the outer-face rail recess."""
+def test_part_a_lock_insert_holes_are_4mm_by_3mm_deep() -> None:
+    """Catch lock insert holes that miss their axis or run too deep."""
 
     a = make_part_a(BracketParameters())
-    assert_fully_void(a, x_cylinder(-34.5, 7.0, -7.0, -3.0, 1.44))
-    assert_fully_void(a, x_cylinder(27.5, 7.0, -7.0, -3.0, 1.44))
-    assert_fully_solid(a, x_cylinder(-34.4, 6.8, -7.0, -1.49, 0.04))
-    assert_fully_solid(a, x_cylinder(27.6, 6.8, -7.0, -1.49, 0.04))
-    assert_fully_solid(a, x_cylinder(-26.5, 0.5, -7.0, -3.0, 0.3))
-    assert_fully_solid(a, x_cylinder(26.0, 0.5, -7.0, -3.0, 0.3))
+    assert_fully_void(a, x_cylinder(-34.5, 2.6, -7.0, -3.0, 1.9))
+    assert_fully_void(a, x_cylinder(31.9, 2.6, -7.0, -3.0, 1.9))
+    assert_fully_solid(a, x_cylinder(-31.0, 0.5, -7.0, -3.0, 0.3))
+    assert_fully_solid(a, x_cylinder(30.5, 0.5, -7.0, -3.0, 0.3))
 
 
 def test_part_a_has_rear_relief() -> None:
@@ -522,8 +519,8 @@ TESTS = (
     test_part_a_is_a_six_mm_flat_plate_without_ears_or_bosses,
     test_part_a_has_central_vent,
     test_part_a_preserves_all_four_mid360_mounting_holes_at_3_5_mm,
-    test_part_a_has_six_mm_deep_pivot_side_pilot_holes,
-    test_part_a_has_seven_mm_deep_lock_side_pilot_holes,
+    test_part_a_pivot_insert_holes_are_4mm_by_3mm_deep,
+    test_part_a_lock_insert_holes_are_4mm_by_3mm_deep,
     test_part_a_has_rear_relief,
     test_part_b_bounds_match_the_board_top_cover,
     test_part_b_fan_opening_matches_the_cover_and_clears_both_ears,

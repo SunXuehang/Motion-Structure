@@ -30,9 +30,8 @@ EXPECTED_PARAMETERS = (
     ("a_plate_width", 69.0),
     ("a_plate_depth", 85.0),
     ("a_plate_thickness", 6.0),
-    ("a_b_pilot_hole_diameter", 2.9),
-    ("side_thread_depth", 6.0),
-    ("lock_thread_depth", 7.0),
+    ("a_insert_hole_diameter", 4.0),
+    ("a_insert_hole_depth", 3.0),
     ("a_pivot_y", 38.0),
     ("a_pivot_z", -3.0),
     ("b_base_width", 128.0),
@@ -56,7 +55,6 @@ EXPECTED_PARAMETERS = (
     ("root_rib_depth", 8.0),
     ("root_rib_height", 6.0),
     ("root_rib_y_center", 16.0),
-    ("m25_screw_length", 10.0),
     ("m3_screw_length", 8.0),
     ("d435i_shelf_width", 92.0),
     ("d435i_shelf_depth", 20.0),
@@ -235,7 +233,7 @@ def test_official_a_and_m3_mount_axes_are_coaxial() -> None:
     official_centers = _circle_centers(shapes.sensor, 1.45, "z", ("x", "y"))
     part_a_centers = _circle_centers(shapes.part_a, 1.75, "z", ("x", "y"))
     screw_centers = set().union(
-        *(_circle_centers(screw, 1.5, "z", ("x", "y")) for screw in shapes.m3_screws)
+        *(_circle_centers(screw, 1.5, "z", ("x", "y")) for screw in shapes.sensor_screws)
     )
 
     assert official_centers == expected_assembly_centers
@@ -282,64 +280,54 @@ def test_assembly_preserves_official_sensor_and_all_eight_screws() -> None:
 
     assert len(shapes.sensor.Solids) == 7
     assert isclose(shapes.sensor.Volume, sensor.Volume, abs_tol=TOLERANCE)
-    assert len(shapes.m25_screws) == 4
-    assert len(shapes.m3_screws) == 4
-    assert all(screw.isValid() and screw.Volume > 1.0 for screw in shapes.m25_screws)
-    assert all(screw.isValid() and screw.Volume > 1.0 for screw in shapes.m3_screws)
+    assert len(shapes.side_screws) == 4
+    assert len(shapes.sensor_screws) == 4
+    assert all(screw.isValid() and screw.Volume > 1.0 for screw in shapes.side_screws)
+    assert all(screw.isValid() and screw.Volume > 1.0 for screw in shapes.sensor_screws)
 
 
-def test_m25_screws_have_exact_real_geometry_directions_and_locations() -> None:
-    """Catch wrong M2.5 diameters, lengths, heads, sides, or lock-axis positions."""
+def test_m3_side_screws_have_exact_geometry_directions_and_locations() -> None:
+    """Catch wrong M3 diameters, lengths, heads, sides, or lock/pivot axes."""
 
     p = BracketParameters()
     sensor = load_normalized_mid360(ROOT / "vendor/livox/mid-360-asm.stp")
 
-    for angle, expected_axes in {
-        0.0: {
-            (1, 33.0, 14.0, -38.9, -28.9, -41.4, -38.9),
-            (-1, 33.0, 14.0, 28.9, 38.9, 38.9, 41.4),
-            (1, -12.0, 14.0, -37.9, -27.9, -40.4, -37.9),
-            (-1, -12.0, 14.0, 27.9, 37.9, 37.9, 40.4),
-        },
-        40.0: {
-            (1, 33.0, 14.0, -38.9, -28.9, -41.4, -38.9),
-            (-1, 33.0, 14.0, 28.9, 38.9, 38.9, 41.4),
-            (1, -1.472, 42.925442, -37.9, -27.9, -40.4, -37.9),
-            (-1, -1.472, 42.925442, 27.9, 37.9, 37.9, 40.4),
-        },
-    }.items():
-        screws = build_assembly(p, sensor, angle).m25_screws
+    for angle in (0.0, 40.0):
+        placement = placement_for_angle(p, angle)
+        pivot = placement.multVec(App.Vector(0.0, p.a_pivot_y, p.a_pivot_z))
+        lock = placement.multVec(
+            App.Vector(0.0, p.a_pivot_y - p.lock_radius, p.a_pivot_z)
+        )
+        expected = {
+            (side, round(pivot.y, 6), round(pivot.z, 6)) for side in (-1.0, 1.0)
+        } | {
+            (side, round(lock.y, 6), round(lock.z, 6)) for side in (-1.0, 1.0)
+        }
+        screws = build_assembly(p, sensor, angle).side_screws
         assert len(screws) == 4
-        actual: set[tuple[float, ...]] = set()
+        actual: set[tuple[float, float, float]] = set()
         for screw in screws:
             cylinders = _cylindrical_faces(screw, "x")
             assert sorted(round(surface.Radius, 6) for surface, _ in cylinders) == [
-                1.25,
-                4.0,
+                1.5,
+                3.0,
             ]
             shaft_surface, shaft_box = next(
-                item for item in cylinders if isclose(item[0].Radius, 1.25)
+                item for item in cylinders if isclose(item[0].Radius, 1.5)
             )
             _, head_box = next(
-                item for item in cylinders if isclose(item[0].Radius, 4.0)
+                item for item in cylinders if isclose(item[0].Radius, 3.0)
             )
-            assert isclose(shaft_box.XLength, 10.0, abs_tol=TOLERANCE)
-            assert isclose(shaft_box.YLength, 2.5, abs_tol=TOLERANCE)
-            assert isclose(shaft_box.ZLength, 2.5, abs_tol=TOLERANCE)
-            assert isclose(head_box.YLength, 8.0, abs_tol=TOLERANCE)
-            assert isclose(head_box.ZLength, 8.0, abs_tol=TOLERANCE)
+            assert isclose(shaft_box.XLength, 8.0, abs_tol=TOLERANCE)
+            assert isclose(head_box.XLength, 3.0, abs_tol=TOLERANCE)
             actual.add(
                 (
                     round(shaft_surface.Axis.x),
                     round((shaft_box.YMin + shaft_box.YMax) / 2.0, 6),
                     round((shaft_box.ZMin + shaft_box.ZMax) / 2.0, 6),
-                    round(shaft_box.XMin, 6),
-                    round(shaft_box.XMax, 6),
-                    round(head_box.XMin, 6),
-                    round(head_box.XMax, 6),
                 )
             )
-        assert actual == expected_axes
+        assert actual == expected
 
 
 def test_m3_screw_shafts_are_coaxial_and_eight_mm_long() -> None:
@@ -347,7 +335,7 @@ def test_m3_screw_shafts_are_coaxial_and_eight_mm_long() -> None:
 
     p = BracketParameters()
     sensor = load_normalized_mid360(ROOT / "vendor/livox/mid-360-asm.stp")
-    screws = build_assembly(p, sensor, 0.0).m3_screws
+    screws = build_assembly(p, sensor, 0.0).sensor_screws
     actual_centers: set[tuple[float, float]] = set()
     for screw in screws:
         cylinders = _cylindrical_faces(screw, "z")
@@ -402,7 +390,7 @@ def test_build_all_outputs_validates_collisions_and_reimports() -> None:
 
     assert report["angles"] == [0.0, 20.0, 40.0]
     assert report["visible_angle_deg"] == 0.0
-    assert report["parameter_count"] == 47
+    assert report["parameter_count"] == 45
     assert report["official_model"]["sha256"] == (
         "b93e9b51282ed319b6aa755e76a132c0eb03306da5f3b9676bcabf2e2ae25f02"
     )
@@ -508,13 +496,13 @@ def test_fcstd_contains_all_parameter_aliases_and_exact_group_members() -> None:
     artifact = ROOT / relative
     artifact.unlink(missing_ok=True)
     report = build_all_outputs(ROOT)
-    assert report["parameter_count"] == 47
+    assert report["parameter_count"] == 45
     assert artifact.is_file()
     document = App.openDocument(str(artifact))
     try:
         spreadsheet = document.getObject("Parameters")
         assert spreadsheet is not None
-        assert len(EXPECTED_PARAMETERS) == 41
+        assert len(EXPECTED_PARAMETERS) == 39
         for row, (name, expected_value) in enumerate(EXPECTED_PARAMETERS, start=2):
             cell = f"B{row}"
             assert spreadsheet.getAlias(cell) == name
@@ -523,21 +511,21 @@ def test_fcstd_contains_all_parameter_aliases_and_exact_group_members() -> None:
                 expected_value,
                 abs_tol=TOLERANCE,
             )
-        assert spreadsheet.getAlias("B43") is None
+        assert spreadsheet.getAlias("B47") is None
 
         expected_groups = {
             "PartB": ["PartBShape"],
             "PartA": ["PartAShape"],
             "Sensor": ["OfficialMID360"],
             "Screws": [
-                "M25Screw1",
-                "M25Screw2",
-                "M25Screw3",
-                "M25Screw4",
                 "M3Screw1",
                 "M3Screw2",
                 "M3Screw3",
                 "M3Screw4",
+                "M3SensorScrew1",
+                "M3SensorScrew2",
+                "M3SensorScrew3",
+                "M3SensorScrew4",
             ],
         }
         for group_name, expected_members in expected_groups.items():
@@ -561,7 +549,7 @@ TESTS = (
     test_official_a_and_m3_mount_axes_are_coaxial,
     test_r45_placement_keeps_front_pivot_fixed_and_raises_rear,
     test_assembly_preserves_official_sensor_and_all_eight_screws,
-    test_m25_screws_have_exact_real_geometry_directions_and_locations,
+    test_m3_side_screws_have_exact_geometry_directions_and_locations,
     test_m3_screw_shafts_are_coaxial_and_eight_mm_long,
     test_required_angles_have_no_sensor_a_collision,
     test_zero_degree_flat_plate_has_seven_mm_base_clearance,

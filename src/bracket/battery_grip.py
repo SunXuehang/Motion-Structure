@@ -84,10 +84,11 @@ class BatteryGripParameters:
     pack_height: float = PACK_HEIGHT_MM
 
     # Rear DC-lead window in the tube's -Y wall.  window_top_gap is the plain
-    # wall kept between the window's top edge and the conical root: 2 mm more
-    # than a band-centred window, so the window sits farther from the flange.
-    window_length: float = 14.0
-    window_height: float = 13.0
+    # wall kept between the window's top edge and the conical root; below the
+    # window may dip into the pack's vertical band (user-accepted) to fit the
+    # enlarged 18 x 17 mm opening.
+    window_length: float = 18.0
+    window_height: float = 17.0
     window_corner_radius: float = 2.0
     window_top_gap: float = 2.5
 
@@ -302,15 +303,16 @@ class BatteryGripParameters:
         if self.cap_thickness - self.cap_counterbore_depth + self.cap_pilot_depth < 5.0:
             raise ValueError("the cap screw has too little shank to grip")
 
-        # The DC-lead window must sit in the plain wall above the pack with
-        # plastic above it (window_top_gap) and clear of the pack top below.
-        if (
-            self.root_z0 - self.pack_z1
-            <= self.window_top_gap + self.window_height
-        ):
-            raise ValueError("no plain wall band left for the DC-lead window")
+        # The DC-lead window sits in the straight tube wall below the conical
+        # root.  window_top_gap keeps its top edge off the cone; the bottom may
+        # reach into the pack's band by design, so no pack-top clearance is
+        # demanded -- only that the window stays on the plain tube.
         if self.window_length >= self.bore_diameter:
             raise ValueError("the window is wider than the bore")
+        if self.window_center_z + self.window_height / 2.0 >= self.root_z0:
+            raise ValueError("the window must stay below the conical root")
+        if self.window_center_z - self.window_height / 2.0 <= self.grip_z0:
+            raise ValueError("the window leaves the tube wall")
 
         # Mount holes are plain M3 clearance cut through the whole 6 mm
         # flange; retention comes from an M3 nut under the flange, never from

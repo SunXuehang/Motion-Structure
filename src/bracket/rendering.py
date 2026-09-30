@@ -152,12 +152,12 @@ def _render_part_a_pivot_section(p: BracketParameters, path: Path) -> None:
     """Render A's direct side-thread section through its pivot axis."""
 
     figure, axis = _section_axis(
-        "结构 A · 6 mm平板侧面螺纹孔剖面",
+        "结构 A · 6 mm平板侧面 M3 热熔螺母底孔剖面",
         f"剖切位置 Y=+{p.a_pivot_y:g} mm · 从机器人前方向后看",
     )
     half_width = p.a_plate_width / 2.0
-    thread_depth = p.side_thread_depth
-    pilot_radius = p.a_b_pilot_hole_diameter / 2.0
+    thread_depth = p.a_insert_hole_depth
+    pilot_radius = p.a_insert_hole_diameter / 2.0
 
     _material(axis, -half_width, -p.a_plate_thickness, p.a_plate_width, p.a_plate_thickness)
     axis.add_patch(Rectangle((-half_width, p.a_pivot_z - pilot_radius), thread_depth, 2.0 * pilot_radius,
@@ -166,10 +166,10 @@ def _render_part_a_pivot_section(p: BracketParameters, path: Path) -> None:
                              facecolor="white", edgecolor="#17324d", linewidth=1.5))
     axis.axhline(p.a_pivot_z, color="#56697d", linewidth=0.9, linestyle="--")
 
-    _horizontal_dimension(axis, -half_width, -half_width + thread_depth, 3.5, "螺纹底孔深 6 mm")
-    _horizontal_dimension(axis, half_width - thread_depth, half_width, 3.5, "螺纹底孔深 6 mm")
+    _horizontal_dimension(axis, -half_width, -half_width + thread_depth, 3.5, "底孔深 3 mm")
+    _horizontal_dimension(axis, half_width - thread_depth, half_width, 3.5, "底孔深 3 mm")
     axis.annotate(
-        "Ø2.9 mm\nM3×0.5 PLA攻丝底孔",
+        "Ø4.0 mm\nM3 热熔螺母底孔",
         xy=(-39.5, p.a_pivot_z),
         xytext=(-24.0, 7.0),
         arrowprops={"arrowstyle": "->", "color": "#8d1c28", "linewidth": 1.6},
@@ -177,7 +177,7 @@ def _render_part_a_pivot_section(p: BracketParameters, path: Path) -> None:
         color="#8d1c28",
         ha="center",
     )
-    axis.text(0.0, -9.0, "两侧孔不贯通中部；螺钉直接进入 6 mm PLA 平板侧面", ha="center", fontsize=15)
+    axis.text(0.0, -9.0, "两侧盲孔内嵌 M3 热熔螺母，螺钉拧入铜螺母", ha="center", fontsize=15)
     axis.text(0.0, -11.5, "蓝色斜线 = PLA 实体    白色 = 孔", ha="center", fontsize=13, color="#42536a")
     axis.set_xlim(-53.0, 53.0)
     axis.set_ylim(-13.0, 10.0)

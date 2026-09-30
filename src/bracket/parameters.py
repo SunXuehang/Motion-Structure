@@ -9,9 +9,6 @@ class DerivedDimensions:
     """Values calculated from one bracket parameter set, in millimetres."""
 
     main_side_gap: float
-    pivot_thread_engagement: float
-    locked_thread_engagement: float
-    screw_tip_setback: float
     slot_overrun_deg: float
     slot_total_arc_length: float
     sector_profile_extension_deg: float
@@ -30,9 +27,11 @@ class BracketParameters:
     a_plate_width: float = 69.0
     a_plate_depth: float = 85.0
     a_plate_thickness: float = 6.0
-    a_b_pilot_hole_diameter: float = 2.9
-    side_thread_depth: float = 6.0
-    lock_thread_depth: float = 7.0
+    # Four side blind holes on Part A (two per side) that seat M3 brass
+    # heat-set inserts: the inserts take the thread, so the pilot is wider
+    # and shorter than the old self-tapping Ø2.9 pilot.
+    a_insert_hole_diameter: float = 4.0
+    a_insert_hole_depth: float = 3.0
     a_pivot_y: float = 38.0
     a_pivot_z: float = -3.0
     b_base_width: float = 128.0
@@ -56,7 +55,6 @@ class BracketParameters:
     root_rib_depth: float = 8.0
     root_rib_height: float = 6.0
     root_rib_y_center: float = 16.0
-    m25_screw_length: float = 10.0
     m3_screw_length: float = 8.0
     # Rounded rectangular opening through the base plate, over the upper
     # cover's fan/heatsink opening.  These four values copy
@@ -93,9 +91,8 @@ class BracketParameters:
             self.a_plate_width,
             self.a_plate_depth,
             self.a_plate_thickness,
-            self.a_b_pilot_hole_diameter,
-            self.side_thread_depth,
-            self.lock_thread_depth,
+            self.a_insert_hole_diameter,
+            self.a_insert_hole_depth,
             self.b_base_width,
             self.b_base_depth,
             self.b_base_thickness,
@@ -115,7 +112,6 @@ class BracketParameters:
             self.root_rib_depth,
             self.root_rib_height,
             self.root_rib_y_center,
-            self.m25_screw_length,
             self.m3_screw_length,
             self.b_fan_opening_length,
             self.b_fan_opening_width,
@@ -141,14 +137,10 @@ class BracketParameters:
             raise ValueError("A/B side gap must be at least 0.4 mm")
         if dimensions.plate_base_clearance < 2.0:
             raise ValueError("A plate/base clearance must be at least 2 mm")
-        if dimensions.locked_thread_engagement < 5.0:
-            raise ValueError("M2.5 thread engagement must be at least 5 mm")
-        if dimensions.pivot_thread_engagement < 5.0:
-            raise ValueError("M2.5 pivot engagement must be at least 5 mm")
-        if dimensions.screw_tip_setback < 0.2:
-            raise ValueError("M2.5 screw tip setback must be at least 0.2 mm")
-        if self.side_thread_depth - dimensions.pivot_thread_engagement < 0.2:
-            raise ValueError("M2.5 pivot screw tip setback must be at least 0.2 mm")
+        # Opposite-side insert holes are coaxial and must not meet in the
+        # middle of the 69 mm wide plate.
+        if self.a_insert_hole_depth > self.a_plate_width / 2.0 - 2.0:
+            raise ValueError("side insert holes from both faces must not meet")
         if self.sector_outer_radius < self.lock_radius + 8.0:
             raise ValueError("sector requires 8 mm outside the slot centerline")
         if self.track_recess_depth >= self.b_wall_thickness:
@@ -196,15 +188,9 @@ class BracketParameters:
 
 
 def derive(p: BracketParameters) -> DerivedDimensions:
-    """Calculate side, fastening, slot, and vertical-clearance chains."""
+    """Calculate side, slot, and vertical-clearance chains."""
 
     main_side_gap = (p.b_inner_width - p.a_plate_width) / 2.0
-    pivot_thread_engagement = p.m25_screw_length - p.b_wall_thickness - main_side_gap
-    locked_thread_engagement = (
-        p.m25_screw_length
-        - (p.b_wall_thickness - p.track_recess_depth)
-        - main_side_gap
-    )
     slot_overrun_deg = degrees(p.slot_overrun_length / p.lock_radius)
     sector_profile_extension_deg = degrees(
         (p.slot_overrun_length + p.slot_width / 2.0 + p.sector_bridge_length)
@@ -212,9 +198,6 @@ def derive(p: BracketParameters) -> DerivedDimensions:
     )
     return DerivedDimensions(
         main_side_gap=main_side_gap,
-        pivot_thread_engagement=pivot_thread_engagement,
-        locked_thread_engagement=locked_thread_engagement,
-        screw_tip_setback=p.lock_thread_depth - locked_thread_engagement,
         slot_overrun_deg=slot_overrun_deg,
         slot_total_arc_length=(
             p.lock_radius * radians(p.working_angle_deg)

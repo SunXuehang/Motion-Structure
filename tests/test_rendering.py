@@ -100,6 +100,6 @@ def test_separate_a_and_b_pivot_sections_are_full_size_pngs(monkeypatch):
         assert path.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
         with Image.open(path) as image:
             assert image.size == (1600, 1000)
-    assert "Ø2.9 mm\nM3×0.5 PLA攻丝底孔" in labels
+    assert "Ø4.0 mm\nM3 热熔螺母底孔" in labels
     assert "Ø3.4 mm M3贯穿孔" in labels
     assert "M2.5" not in "\n".join(labels)

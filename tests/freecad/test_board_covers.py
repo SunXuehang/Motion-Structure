@@ -1,5 +1,6 @@
 """FreeCAD checks for the UAV V3 compute-carrier cover plates."""
 
+from dataclasses import replace
 from math import isclose
 from pathlib import Path
 import sys
@@ -69,6 +70,121 @@ def test_m3_cover_parameters_match_the_approved_revision() -> None:
         1.5,
         4.0,
         5.5,
+    )
+
+
+def _occupied(cover: Part.Shape, x: float, y: float, z: float) -> bool:
+    probe = Part.makeCylinder(0.5, 0.8, App.Vector(x, y, z))
+    return cover.common(probe).Volume > 0.7 * probe.Volume
+
+
+def test_top_cover_usbc_guard_deepens_the_rear_rim_segment() -> None:
+    """Verify the -Y rim wall is deepest right over the USB-C shell pair."""
+
+    p = BoardCoverParameters()
+    top = make_top_cover(p)
+    assert top.isValid() and len(top.Solids) == 1
+
+    # Inside the USB-C span the -Y wall drops to z 27.3 (~1 mm above shells).
+    assert _occupied(top, 30.0, -37.3, 27.7)
+    assert _occupied(top, 40.0, -37.3, 27.7)
+    assert not _occupied(top, 30.0, -37.3, 26.9)
+    # The rest of the -Y wall is deepened to 28.7 (1 mm rule for that span).
+    assert _occupied(top, -40.0, -37.3, 28.8)
+    assert not _occupied(top, -40.0, -37.3, 28.4)
+    # Disabling the guards restores the plain rim (bottom ~29.15) everywhere.
+    plain = make_top_cover(
+        replace(p, usbc_guard_enabled=False, rim_guard_enabled=False)
+    )
+    assert plain.isValid() and len(plain.Solids) == 1
+    assert not _occupied(plain, 30.0, -37.3, 28.8)
+    assert not _occupied(plain, -40.0, -37.3, 28.8)
+
+
+def test_top_cover_perimeter_rim_guards_clear_the_board() -> None:
+    """Check each side's deepened wall stops ~1 mm above what it guards."""
+
+    p = BoardCoverParameters()
+    top = make_top_cover(p)
+    # -X short edge: guard bottom z 28.5.
+    assert _occupied(top, -52.2, 0.0, 28.9)
+    assert not _occupied(top, -52.2, 0.0, 27.9)
+    # +X short edge: guard bottom z 28.7.
+    assert _occupied(top, 52.2, 0.0, 29.1)
+    assert not _occupied(top, 52.2, 0.0, 27.9)
+    # Front +Y: the tall part leaves no room, so only the plain rim remains.
+    assert _occupied(top, 0.0, 37.3, 29.4)
+    assert not _occupied(top, 0.0, 37.3, 28.8)
+
+
+def test_cover_guard_parameters_reject_out_of_range_geometry() -> None:
+    """Catch a guard span or depth that cannot sit safely under the cover."""
+
+    def expect_raises(match: str, **changes) -> None:
+        try:
+            replace(BoardCoverParameters(), **changes)
+        except ValueError as error:
+            assert match in str(error)
+            return
+        raise AssertionError(f"expected ValueError containing {match!r}")
+
+    expect_raises("must hang below the upper plate", usbc_guard_bottom_z=40.0)
+    expect_raises("stay clear of the board top", usbc_guard_bottom_z=20.0)
+    expect_raises(
+        "must sit on the board edge", usbc_guard_x0=50.0, usbc_guard_x1=60.0
+    )
+    expect_raises("rear -Y", rim_guard_neg_y_bottom_z=40.0)
+    expect_raises("front +Y", rim_guard_pos_y_bottom_z=20.0)
+
+
+def test_bottom_cover_rim_guards_rise_under_the_board_underside() -> None:
+    """Check the lower cover's rim walls rise to just under the board."""
+
+    p = BoardCoverParameters()
+    bottom = make_bottom_cover(p)
+    assert bottom.isValid() and len(bottom.Solids) == 1
+    # -Y / +Y / +X guards top out at z 9.45 (1 mm below the ~10.45 underside).
+    assert _occupied(bottom, 0.0, -37.3, 8.0)
+    assert _occupied(bottom, 0.0, 37.3, 8.0)
+    assert _occupied(bottom, 52.2, 0.0, 8.0)
+    assert not _occupied(bottom, 0.0, 37.3, 9.7)
+    assert not _occupied(bottom, 52.2, 0.0, 9.7)
+    # The -X wall is raised to 9.45, but inside the gap band (y ~ -3.5..7) it
+    # stops at gap_top_z 5.45 so the interface (which hangs to z 5.45) stays
+    # exposed above that short wall.  The base rim remains all along.
+    assert _occupied(bottom, -52.2, -15.0, 2.0)
+    assert _occupied(bottom, -52.2, -15.0, 8.0)
+    assert not _occupied(bottom, -52.2, -15.0, 9.7)
+    assert _occupied(bottom, -52.2, 0.0, 2.0)   # base rim under the gap
+    assert _occupied(bottom, -52.2, 0.0, 4.6)   # gap wall raised to ~5.45
+    assert not _occupied(bottom, -52.2, 0.0, 5.7)  # open above the gap wall
+    assert not _occupied(bottom, -52.2, 0.0, 8.0)
+    # Disabling the guards restores the plain rim everywhere.
+    plain = make_bottom_cover(replace(p, bottom_rim_guard_enabled=False))
+    assert not _occupied(plain, 0.0, 37.3, 8.0)
+
+
+def test_bottom_rim_guard_parameters_reject_out_of_range_geometry() -> None:
+    """Catch a raised rim wall that would reach the board or not rise at all."""
+
+    def expect_raises(match: str, **changes) -> None:
+        try:
+            replace(BoardCoverParameters(), **changes)
+        except ValueError as error:
+            assert match in str(error)
+            return
+        raise AssertionError(f"expected ValueError containing {match!r}")
+
+    expect_raises("rear -Y", bottom_rim_guard_neg_y_top_z=40.0)
+    expect_raises("-X", bottom_rim_guard_neg_x_top_z=-1.0)
+    expect_raises(
+        "bottom -X rim gap must sit within",
+        bottom_rim_guard_neg_x_gap_y0=0.0,
+        bottom_rim_guard_neg_x_gap_y1=50.0,
+    )
+    expect_raises(
+        "bottom -X rim gap wall must be shorter",
+        bottom_rim_guard_neg_x_gap_top_z=9.5,
     )
 
 
@@ -374,12 +490,27 @@ def test_both_covers_have_od6_standoffs_and_m3_clearance() -> None:
 
 
 def test_board_facing_rims_enclose_corner_standoffs_with_square_roots() -> None:
-    """Verify literal rectangular rims, square roots, and corner fusion."""
+    """Verify literal rectangular rims, square roots, and corner fusion.
+
+    The perimeter guards are deliberately disabled here so the probe sees the
+    plain rim only; the guards themselves have dedicated tests below.
+    """
 
     p = BoardCoverParameters()
+    plain = replace(
+        p,
+        usbc_guard_enabled=False,
+        rim_guard_enabled=False,
+        bottom_rim_guard_enabled=False,
+    )
     cases = (
-        (make_top_cover(p), top_plate_z0(p), p.top_rim_height, -1.0),
-        (make_bottom_cover(p), bottom_plate_z1(p), p.bottom_rim_height, 1.0),
+        (make_top_cover(plain), top_plate_z0(plain), plain.top_rim_height, -1.0),
+        (
+            make_bottom_cover(plain),
+            bottom_plate_z1(plain),
+            plain.bottom_rim_height,
+            1.0,
+        ),
     )
     for cover, root_z, rim_height, height_direction in cases:
         assert cover.isValid() and len(cover.Solids) == 1
@@ -547,6 +678,11 @@ def test_reference_placement_matches_the_four_cad_standoffs() -> None:
 
 TESTS = (
     test_m3_cover_parameters_match_the_approved_revision,
+    test_top_cover_usbc_guard_deepens_the_rear_rim_segment,
+    test_top_cover_perimeter_rim_guards_clear_the_board,
+    test_cover_guard_parameters_reject_out_of_range_geometry,
+    test_bottom_cover_rim_guards_rise_under_the_board_underside,
+    test_bottom_rim_guard_parameters_reject_out_of_range_geometry,
     test_revised_cover_envelopes_preserve_the_outer_faces,
     test_both_covers_have_sixteen_m3_holes_aligned_to_mounting_rows,
     test_both_covers_use_the_literal_m3_mounting_pattern,

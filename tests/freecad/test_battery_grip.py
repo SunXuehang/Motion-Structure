@@ -242,9 +242,14 @@ def test_rear_window_passes_the_dc_leads_through_the_tube_wall() -> None:
             ),
         )
         assert BODY.common(probe).Volume > 0.5 * probe.Volume, angle
-    # The window sits in the plain wall, above the pack and below the cone.
-    assert P.window_center_z - P.window_height / 2.0 > P.pack_z1
-    assert P.window_center_z + P.window_height / 2.0 < P.root_z0
+    # The window sits on the plain tube wall: its top clears the conical root
+    # by window_top_gap, and the bottom stays well above the open tube mouth.
+    # By user choice the enlarged window dips into the pack's vertical band.
+    top_edge = P.window_center_z + P.window_height / 2.0
+    bottom_edge = P.window_center_z - P.window_height / 2.0
+    assert isclose(P.root_z0 - top_edge, P.window_top_gap, abs_tol=1e-9)
+    assert bottom_edge < P.pack_z1
+    assert bottom_edge > P.grip_z0
 
 
 def test_bottom_cap_screws_into_three_posts_inside_the_bore() -> None:

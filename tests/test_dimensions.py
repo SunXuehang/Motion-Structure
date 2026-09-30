@@ -33,7 +33,7 @@ def test_r50_primary_dimensions_and_side_clearance():
         6.0,
     )
     assert p.root_rib_y_center == 16.0
-    assert (p.side_thread_depth, p.lock_thread_depth) == (6.0, 7.0)
+    assert (p.a_insert_hole_diameter, p.a_insert_hole_depth) == (4.0, 3.0)
     assert isclose(d.main_side_gap, 0.4, abs_tol=1e-9)
     assert isclose(d.plate_base_clearance, 7.0, abs_tol=1e-9)
 
@@ -41,9 +41,6 @@ def test_r50_primary_dimensions_and_side_clearance():
 def test_r50_preserves_the_approved_slot_travel():
     d = derive(BracketParameters())
 
-    assert isclose(d.pivot_thread_engagement, 5.6, abs_tol=1e-9)
-    assert isclose(d.locked_thread_engagement, 6.6, abs_tol=1e-9)
-    assert isclose(d.screw_tip_setback, 0.4, abs_tol=1e-9)
     assert isclose(d.slot_overrun_deg, 1.909859317103, abs_tol=1e-9)
     assert isclose(d.slot_total_arc_length, 34.415926535898, abs_tol=1e-9)
     assert isclose(d.sector_profile_extension_deg, 9.167324722093, abs_tol=1e-9)
@@ -67,7 +64,8 @@ def test_sensor_mount_pitches_match_the_official_step_evidence():
 def test_m3_hole_parameters_preserve_mid360_mounting_holes() -> None:
     p = BracketParameters()
 
-    assert p.a_b_pilot_hole_diameter == 2.9
+    assert p.a_insert_hole_diameter == 4.0
+    assert p.a_insert_hole_depth == 3.0
     assert p.b_clearance_hole_diameter == 3.4
     assert p.b_base_mount_hole_diameter == 3.4
     assert p.slot_width == 3.4
@@ -118,19 +116,17 @@ def test_parameters_are_immutable_after_construction():
         {"working_angle_deg": 40.1},
         {"b_inner_width": 69.0},
         {"b_inner_width": 69.6},
-        {"side_thread_depth": 5.7},
+        {"a_insert_hole_depth": 40.0},
         {"pivot_z_above_base": 4.9},
-        {"lock_thread_depth": 6.7},
         {"sector_outer_radius": 52.9},
-        {"m25_screw_length": 9.0},
         {"track_recess_depth": 4.0},
         {"sector_pivot_lobe_radius": 6.1},
         {"root_rib_extension": 0.0},
         {"root_rib_depth": 0.0},
         {"root_rib_height": 0.0},
         {"root_rib_y_center": 0.0},
-        {"a_b_pilot_hole_diameter": 0.0},
-        {"a_b_pilot_hole_diameter": -0.1},
+        {"a_insert_hole_diameter": 0.0},
+        {"a_insert_hole_diameter": -0.1},
         {"b_clearance_hole_diameter": 0.0},
         {"b_clearance_hole_diameter": -0.1},
         {"b_base_mount_hole_diameter": 0.0},

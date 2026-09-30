@@ -29,6 +29,43 @@ class BoardCoverParameters:
     rim_thickness: float = 1.5
     top_rim_height: float = 4.0
     bottom_rim_height: float = 5.5
+    # Downward guard under the top cover's rear (-Y) rim protecting the two
+    # USB Type-C shells measured on the carrier CAD (local x 22.6..44.2 mm,
+    # shells ~26.25 tall there).  usbc_guard_bottom_z keeps the deepened wall
+    # 1 mm above the shells so it shields without touching.
+    usbc_guard_enabled: bool = True
+    usbc_guard_x0: float = 21.0
+    usbc_guard_x1: float = 46.0
+    usbc_guard_bottom_z: float = 27.3
+    # Deepening for the rest of the top-cover rim, one value per side, each
+    # roughly 1 mm above the tallest carrier feature measured under that rim
+    # wall.  A side whose value is not below the plain rim bottom (front +Y,
+    # 29.33) gets no extra guard: the existing rim is already as close as the
+    # 1 mm rule allows there.
+    rim_guard_enabled: bool = True
+    rim_guard_neg_y_bottom_z: float = 28.7  # rear -Y, excluding the USB span
+    rim_guard_pos_y_bottom_z: float = 29.33  # front +Y (blocked by a tall part)
+    rim_guard_neg_x_bottom_z: float = 28.5  # -X short edge
+    rim_guard_pos_x_bottom_z: float = 28.7  # +X short edge
+    # The bottom cover's rim faces up toward the board, so its guards grow
+    # upward instead.  Each value is the raised wall top, 1 mm below the
+    # lowest carrier feature measured under that wall (mostly the board
+    # underside at ~10.45; the -X short edge has an under-hang down to 5.45).
+    bottom_rim_guard_enabled: bool = True
+    bottom_rim_guard_neg_y_top_z: float = 9.45  # -Y rear
+    bottom_rim_guard_pos_y_top_z: float = 9.45  # +Y front
+    bottom_rim_guard_neg_x_top_z: float = 9.45  # -X short edge
+    bottom_rim_guard_pos_x_top_z: float = 9.45  # +X short edge
+    # Leave a local gap in the raised -X wall so the board's short-edge
+    # interface stays exposed instead of capping the whole -X wall at the
+    # interface height.  The interface (local x ~ -57..-50) hangs to z 5.45
+    # across y ~ -1..+5; inside the y band the wall is raised only to
+    # bottom_rim_guard_neg_x_gap_top_z (just below the interface), while the
+    # rest of the -X wall rises to bottom_rim_guard_neg_x_top_z.
+    bottom_rim_guard_neg_x_gap_enabled: bool = True
+    bottom_rim_guard_neg_x_gap_y0: float = -3.5
+    bottom_rim_guard_neg_x_gap_y1: float = 7.0
+    bottom_rim_guard_neg_x_gap_top_z: float = 5.45
     bottom_end_extension: float = 10.0
     bottom_extension_hole_y_pitch: float = 10.0
     top_fan_center_x: float = -0.153
@@ -94,6 +131,20 @@ class BoardCoverParameters:
                 self.reference_center_x,
                 self.reference_center_y,
                 self.reference_rotation_deg,
+                self.usbc_guard_x0,
+                self.usbc_guard_x1,
+                self.usbc_guard_bottom_z,
+                self.rim_guard_neg_y_bottom_z,
+                self.rim_guard_pos_y_bottom_z,
+                self.rim_guard_neg_x_bottom_z,
+                self.rim_guard_pos_x_bottom_z,
+                self.bottom_rim_guard_neg_y_top_z,
+                self.bottom_rim_guard_pos_y_top_z,
+                self.bottom_rim_guard_neg_x_top_z,
+                self.bottom_rim_guard_pos_x_top_z,
+                self.bottom_rim_guard_neg_x_gap_y0,
+                self.bottom_rim_guard_neg_x_gap_y1,
+                self.bottom_rim_guard_neg_x_gap_top_z,
             )
         ):
             raise ValueError("cover reference coordinates must be finite")
@@ -148,6 +199,72 @@ class BoardCoverParameters:
                 raise ValueError("cover opening exceeds the cover length")
             if abs(center_y) + width / 2.0 >= edge_y:
                 raise ValueError("cover opening exceeds the cover width")
+
+        if self.usbc_guard_enabled:
+            plate_z0 = self.board_mounting_z_max + self.top_standoff_height
+            if not (
+                -edge_x <= self.usbc_guard_x0 < self.usbc_guard_x1 <= edge_x
+            ):
+                raise ValueError("USB-C guard span must sit on the board edge")
+            if self.usbc_guard_bottom_z >= plate_z0:
+                raise ValueError("USB-C guard must hang below the upper plate")
+            if self.usbc_guard_bottom_z <= self.board_mounting_z_max + 0.5:
+                raise ValueError(
+                    "USB-C guard bottom must stay clear of the board top"
+                )
+        if self.rim_guard_enabled:
+            plate_z0 = self.board_mounting_z_max + self.top_standoff_height
+            for label, value in (
+                ("rear -Y", self.rim_guard_neg_y_bottom_z),
+                ("front +Y", self.rim_guard_pos_y_bottom_z),
+                ("-X", self.rim_guard_neg_x_bottom_z),
+                ("+X", self.rim_guard_pos_x_bottom_z),
+            ):
+                if not (
+                    self.board_mounting_z_max + 0.5
+                    < value
+                    < plate_z0
+                ):
+                    raise ValueError(
+                        f"rim guard bottom on {label} must clear the board "
+                        "yet stay under the plate"
+                    )
+        if self.bottom_rim_guard_enabled:
+            rim_top = (
+                self.board_mounting_z_min
+                - self.bottom_standoff_height
+                + self.bottom_rim_height
+            )
+            half_y = self.mount_pitch_y / 2.0 + self.standoff_outer_diameter / 2.0
+            inner_half_y = half_y - self.rim_thickness
+            for label, value in (
+                ("rear -Y", self.bottom_rim_guard_neg_y_top_z),
+                ("front +Y", self.bottom_rim_guard_pos_y_top_z),
+                ("-X", self.bottom_rim_guard_neg_x_top_z),
+                ("+X", self.bottom_rim_guard_pos_x_top_z),
+            ):
+                if not (rim_top < value < self.board_mounting_z_min):
+                    raise ValueError(
+                        f"bottom rim guard top on {label} must rise above the "
+                        "plain rim yet stay below the board underside"
+                    )
+            if self.bottom_rim_guard_neg_x_gap_enabled and not (
+                -inner_half_y
+                <= self.bottom_rim_guard_neg_x_gap_y0
+                < self.bottom_rim_guard_neg_x_gap_y1
+                <= inner_half_y
+            ):
+                raise ValueError(
+                    "bottom -X rim gap must sit within the -X wall span"
+                )
+            if self.bottom_rim_guard_neg_x_gap_enabled and not (
+                rim_top
+                < self.bottom_rim_guard_neg_x_gap_top_z
+                < self.bottom_rim_guard_neg_x_top_z
+            ):
+                raise ValueError(
+                    "bottom -X rim gap wall must be shorter than the full wall"
+                )
 
 
 def _fuse_all(shapes: Iterable[Part.Shape]) -> Part.Shape:
@@ -253,6 +370,7 @@ def _make_cover(
     openings: Iterable[tuple[float, float, float, float, float]],
     plate_length: float | None = None,
     additional_hole_centers: Iterable[tuple[float, float]] = (),
+    extras: Iterable[Part.Shape] = (),
 ) -> Part.Shape:
     """Fuse the plate, standoffs, and board-facing rim before cutting openings."""
 
@@ -271,7 +389,7 @@ def _make_cover(
         for x, y in mounting_centers
     )
     rim = _make_standoff_rim(p, rim_z0, rim_height)
-    solid = _fuse_all((blank, rim, *standoffs)).removeSplitter()
+    solid = _fuse_all((blank, rim, *standoffs, *extras)).removeSplitter()
 
     cutter_z = min(z0, standoff_z0) - 0.1
     cutter_height = (
@@ -318,10 +436,66 @@ def extension_hole_centers(
     )
 
 
+def _top_cover_guards(p: BoardCoverParameters) -> tuple[Part.Shape, ...]:
+    """Deepened rim walls that guard the board's edge connectors.
+
+    Each guard is a downward extension of a side of the existing rim wall,
+    cut to stop 1 mm above the tallest carrier feature measured under that
+    wall (values live in the ``rim_guard_*`` and ``usbc_guard_*`` fields).
+    A side whose guard bottom would not go below the plain rim bottom (the
+    front +Y) simply contributes nothing, because the plain rim is already
+    as deep as the 1 mm rule allows there.
+    """
+
+    plate_z0 = p.board_mounting_z_max + p.top_standoff_height
+    rim_z0 = plate_z0 - p.top_rim_height
+    half_x = p.mount_pitch_x / 2.0 + p.standoff_outer_diameter / 2.0
+    half_y = p.mount_pitch_y / 2.0 + p.standoff_outer_diameter / 2.0
+    thickness = p.rim_thickness
+    guards: list[Part.Shape] = []
+
+    def add(x0: float, y0: float, length_x: float, length_y: float,
+            bottom_z: float) -> None:
+        if bottom_z >= rim_z0:
+            return
+        guards.append(
+            Part.makeBox(
+                length_x,
+                length_y,
+                plate_z0 - bottom_z,
+                App.Vector(x0, y0, bottom_z),
+            )
+        )
+
+    if p.usbc_guard_enabled and p.usbc_guard_bottom_z < rim_z0:
+        # Rear -Y, the two USB Type-C shells (x 21..46): deepest guard.
+        add(
+            p.usbc_guard_x0,
+            -half_y,
+            p.usbc_guard_x1 - p.usbc_guard_x0,
+            thickness,
+            p.usbc_guard_bottom_z,
+        )
+    if p.rim_guard_enabled:
+        # Rear -Y wall, whole side.
+        add(-half_x, -half_y, 2.0 * half_x, thickness,
+            p.rim_guard_neg_y_bottom_z)
+        # Front +Y wall, whole side (skipped: already near the tall part).
+        add(-half_x, half_y - thickness, 2.0 * half_x, thickness,
+            p.rim_guard_pos_y_bottom_z)
+        # Left and right short-edge walls.
+        add(-half_x, -(half_y - thickness), thickness,
+            2.0 * (half_y - thickness), p.rim_guard_neg_x_bottom_z)
+        add(half_x - thickness, -(half_y - thickness), thickness,
+            2.0 * (half_y - thickness), p.rim_guard_pos_x_bottom_z)
+    return tuple(guards)
+
+
 def make_top_cover(p: BoardCoverParameters) -> Part.Shape:
     """Build the upper plate on board-side collision-clearance standoffs."""
 
     plate_z0 = p.board_mounting_z_max + p.top_standoff_height
+    extras = _top_cover_guards(p)
     return _make_cover(
         p,
         plate_z0,
@@ -340,7 +514,66 @@ def make_top_cover(p: BoardCoverParameters) -> Part.Shape:
         ),
         plate_length=p.board_length + 2.0 * p.bottom_end_extension,
         additional_hole_centers=extension_hole_centers(p),
+        extras=extras,
     )
+
+
+def _bottom_cover_guards(p: BoardCoverParameters) -> tuple[Part.Shape, ...]:
+    """Raised rim walls on the lower cover that shield the board underside.
+
+    The bottom rim faces up toward the board, so its guard walls grow from the
+    plain rim crest upward to one value per side.  Each value keeps ~1 mm
+    below the lowest carrier feature measured under that wall (the values live
+    in the ``bottom_rim_guard_*`` fields).  A side whose value is not above
+    the plain rim crest contributes nothing.
+    """
+
+    plate_top = p.board_mounting_z_min - p.bottom_standoff_height
+    rim_top = plate_top + p.bottom_rim_height
+    half_x = p.mount_pitch_x / 2.0 + p.standoff_outer_diameter / 2.0
+    half_y = p.mount_pitch_y / 2.0 + p.standoff_outer_diameter / 2.0
+    thickness = p.rim_thickness
+    guards: list[Part.Shape] = []
+
+    def add(x0: float, y0: float, length_x: float, length_y: float,
+            top_z: float) -> None:
+        if top_z <= rim_top:
+            return
+        guards.append(
+            Part.makeBox(
+                length_x,
+                length_y,
+                top_z - rim_top,
+                App.Vector(x0, y0, rim_top),
+            )
+        )
+
+    if not p.bottom_rim_guard_enabled:
+        return ()
+    add(-half_x, -half_y, 2.0 * half_x, thickness,
+        p.bottom_rim_guard_neg_y_top_z)
+    add(-half_x, half_y - thickness, 2.0 * half_x, thickness,
+        p.bottom_rim_guard_pos_y_top_z)
+    inner_half_y = half_y - thickness
+    if p.bottom_rim_guard_neg_x_gap_enabled:
+        # Whole -X wall rises to the full crest; inside the gap band it only
+        # rises to gap_top_z, leaving the interface exposed above that wall.
+        gap_y0 = p.bottom_rim_guard_neg_x_gap_y0
+        gap_y1 = p.bottom_rim_guard_neg_x_gap_y1
+        if -inner_half_y < gap_y0:
+            add(-half_x, -inner_half_y, thickness, gap_y0 - (-inner_half_y),
+                p.bottom_rim_guard_neg_x_top_z)
+        add(-half_x, gap_y0, thickness, gap_y1 - gap_y0,
+            p.bottom_rim_guard_neg_x_gap_top_z)
+        if gap_y1 < inner_half_y:
+            add(-half_x, gap_y1, thickness, inner_half_y - gap_y1,
+                p.bottom_rim_guard_neg_x_top_z)
+    else:
+        add(-half_x, -inner_half_y, thickness, 2.0 * inner_half_y,
+            p.bottom_rim_guard_neg_x_top_z)
+    add(half_x - thickness, -inner_half_y, thickness, 2.0 * inner_half_y,
+        p.bottom_rim_guard_pos_x_top_z)
+    return tuple(guards)
 
 
 def make_bottom_cover(p: BoardCoverParameters) -> Part.Shape:
@@ -352,7 +585,7 @@ def make_bottom_cover(p: BoardCoverParameters) -> Part.Shape:
         - p.plate_thickness
     )
     standoff_z0 = plate_z0 + p.plate_thickness
-    return _make_cover(
+    cover = _make_cover(
         p,
         plate_z0,
         standoff_z0,
@@ -377,7 +610,9 @@ def make_bottom_cover(p: BoardCoverParameters) -> Part.Shape:
         ),
         plate_length=p.board_length + 2.0 * p.bottom_end_extension,
         additional_hole_centers=extension_hole_centers(p),
+        extras=_bottom_cover_guards(p),
     )
+    return cover
 
 
 def place_in_reference_coordinates(

@@ -28,8 +28,8 @@ class AssemblyShapes:
     part_a: Part.Shape
     part_b: Part.Shape
     sensor: Part.Shape
-    m25_screws: tuple[Part.Shape, ...]
-    m3_screws: tuple[Part.Shape, ...]
+    side_screws: tuple[Part.Shape, ...]
+    sensor_screws: tuple[Part.Shape, ...]
 
 
 def placement_for_angle(p: BracketParameters, angle_deg: float) -> App.Placement:
@@ -56,25 +56,27 @@ def _placed(shape: Part.Shape, placement: App.Placement) -> Part.Shape:
     return placed
 
 
-def _make_m25_screw(
+def _make_m3_side_screw(
     p: BracketParameters,
     side: float,
     y: float,
     z: float,
     outer_face_inset: float = 0.0,
 ) -> Part.Shape:
+    """M3 screw through B's side wall into an M3 heat-set insert in Part A."""
+
     wall_outer_x = p.b_inner_width / 2.0 + p.b_wall_thickness
     outer_face_x = side * (wall_outer_x - outer_face_inset)
     inward = App.Vector(-side, 0.0, 0.0)
     shaft = Part.makeCylinder(
-        1.25,
-        p.m25_screw_length,
+        1.5,
+        p.m3_screw_length,
         App.Vector(outer_face_x, y, z),
         inward,
     )
-    head_thickness = 2.5
+    head_thickness = 3.0
     head = Part.makeCylinder(
-        4.0,
+        3.0,
         head_thickness,
         App.Vector(outer_face_x + side * head_thickness, y, z),
         inward,
@@ -106,13 +108,13 @@ def build_assembly(
         App.Vector(0.0, p.a_pivot_y - p.lock_radius, p.a_pivot_z)
     )
     pivot_point = placement.multVec(App.Vector(0.0, p.a_pivot_y, p.a_pivot_z))
-    m25_screws = (
+    side_screws = (
         *tuple(
-            _make_m25_screw(p, side, pivot_point.y, pivot_point.z)
+            _make_m3_side_screw(p, side, pivot_point.y, pivot_point.z)
             for side in (-1.0, 1.0)
         ),
         *tuple(
-            _make_m25_screw(
+            _make_m3_side_screw(
                 p,
                 side,
                 lock_point.y,
@@ -122,7 +124,7 @@ def build_assembly(
             for side in (-1.0, 1.0)
         ),
     )
-    m3_screws = tuple(
+    sensor_screws = tuple(
         _placed(_make_m3_screw(p, x, y), placement)
         for x in (-p.sensor_mount_pitch_x / 2.0, p.sensor_mount_pitch_x / 2.0)
         for y in (-p.sensor_mount_pitch_y / 2.0, p.sensor_mount_pitch_y / 2.0)
@@ -131,8 +133,8 @@ def build_assembly(
         part_a=_placed(make_part_a(p), placement),
         part_b=make_board_mounted_part_b(p),
         sensor=_placed(sensor_shape, placement),
-        m25_screws=m25_screws,
-        m3_screws=m3_screws,
+        side_screws=side_screws,
+        sensor_screws=sensor_screws,
     )
 
 
@@ -188,21 +190,21 @@ def _save_fcstd(path: Path, p: BracketParameters, shapes: AssemblyShapes) -> int
 
         group_screws = document.addObject("App::DocumentObjectGroup", "Screws")
         group_screws.Label = "Metal Screws"
-        for index, screw in enumerate(shapes.m25_screws, start=1):
-            group_screws.addObject(
-                _add_shape(
-                    document,
-                    f"M25Screw{index}",
-                    f"M2.5 x 10 Screw {index}",
-                    screw,
-                )
-            )
-        for index, screw in enumerate(shapes.m3_screws, start=1):
+        for index, screw in enumerate(shapes.side_screws, start=1):
             group_screws.addObject(
                 _add_shape(
                     document,
                     f"M3Screw{index}",
                     f"M3 x 8 Screw {index}",
+                    screw,
+                )
+            )
+        for index, screw in enumerate(shapes.sensor_screws, start=1):
+            group_screws.addObject(
+                _add_shape(
+                    document,
+                    f"M3SensorScrew{index}",
+                    f"M3 x 8 Sensor Screw {index}",
                     screw,
                 )
             )
@@ -306,12 +308,12 @@ def _assembly_named_shapes(
         ("Part A", shapes.part_a),
         ("Official MID-360", shapes.sensor),
         *tuple(
-            (f"M2.5 x 10 Screw {index}", screw)
-            for index, screw in enumerate(shapes.m25_screws, start=1)
+            (f"M3 x 8 Screw {index}", screw)
+            for index, screw in enumerate(shapes.side_screws, start=1)
         ),
         *tuple(
-            (f"M3 x 8 Screw {index}", screw)
-            for index, screw in enumerate(shapes.m3_screws, start=1)
+            (f"M3 x 8 Sensor Screw {index}", screw)
+            for index, screw in enumerate(shapes.sensor_screws, start=1)
         ),
     )
 

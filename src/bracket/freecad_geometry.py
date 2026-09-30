@@ -135,21 +135,21 @@ def make_part_a(p: BracketParameters) -> Part.Shape:
         -p.a_plate_thickness,
     )
     side_holes = (
-        (p.a_pivot_y - p.lock_radius, p.lock_thread_depth),
-        (p.a_pivot_y, p.side_thread_depth),
+        (p.a_pivot_y - p.lock_radius, p.a_insert_hole_depth),
+        (p.a_pivot_y, p.a_insert_hole_depth),
     )
     pilot_holes: list[Part.Shape] = []
     for y, depth in side_holes:
         pilot_holes.extend(
             (
                 Part.makeCylinder(
-                    p.a_b_pilot_hole_diameter / 2.0,
+                    p.a_insert_hole_diameter / 2.0,
                     depth + 0.2,
                     App.Vector(-half_width - 0.1, y, p.a_pivot_z),
                     App.Vector(1.0, 0.0, 0.0),
                 ),
                 Part.makeCylinder(
-                    p.a_b_pilot_hole_diameter / 2.0,
+                    p.a_insert_hole_diameter / 2.0,
                     depth + 0.2,
                     App.Vector(half_width + 0.1, y, p.a_pivot_z),
                     App.Vector(-1.0, 0.0, 0.0),
