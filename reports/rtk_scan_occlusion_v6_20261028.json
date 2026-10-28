@@ -1,0 +1,168 @@
+{
+  "method": "Central projection from manual reference O; same FOV, components and solid-angle weighting as V5",
+  "origin_mm": [
+    0.0,
+    0.0,
+    47.0
+  ],
+  "fov_azimuth_deg": [
+    0,
+    360
+  ],
+  "fov_elevation_deg": [
+    -7,
+    52
+  ],
+  "mesh_deflection_mm": 0.025,
+  "mesh_angular_deflection_rad": 0.1,
+  "versions": {
+    "v5": {
+      "triangles": 30104,
+      "runs": [
+        {
+          "angular_step_deg": 0.5,
+          "rays": 84960,
+          "blocked_solid_angle_percent": 5.941887490655246,
+          "first_hit_class_percent": {
+            "1": 5.941887490655246,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0
+          }
+        },
+        {
+          "angular_step_deg": 0.25,
+          "rays": 339840,
+          "blocked_solid_angle_percent": 5.948190607672044,
+          "first_hit_class_percent": {
+            "1": 5.948190607672044,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0
+          }
+        },
+        {
+          "angular_step_deg": 0.125,
+          "rays": 1359360,
+          "blocked_solid_angle_percent": 5.948874768667825,
+          "first_hit_class_percent": {
+            "1": 5.948874768667825,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0
+          }
+        }
+      ],
+      "fine_result": {
+        "angular_step_deg": 0.125,
+        "rays": 1359360,
+        "blocked_solid_angle_percent": 5.948874768667825,
+        "first_hit_class_percent": {
+          "1": 5.948874768667825,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0
+        }
+      }
+    },
+    "v6": {
+      "triangles": 30180,
+      "runs": [
+        {
+          "angular_step_deg": 0.5,
+          "rays": 84960,
+          "blocked_solid_angle_percent": 6.022408099867827,
+          "first_hit_class_percent": {
+            "1": 6.022408099867827,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0
+          }
+        },
+        {
+          "angular_step_deg": 0.25,
+          "rays": 339840,
+          "blocked_solid_angle_percent": 6.0160375035755465,
+          "first_hit_class_percent": {
+            "1": 6.0160375035755465,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0
+          }
+        },
+        {
+          "angular_step_deg": 0.125,
+          "rays": 1359360,
+          "blocked_solid_angle_percent": 6.019134811730288,
+          "first_hit_class_percent": {
+            "1": 6.019134811730288,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0
+          }
+        }
+      ],
+      "fine_result": {
+        "angular_step_deg": 0.125,
+        "rays": 1359360,
+        "blocked_solid_angle_percent": 6.019134811730288,
+        "first_hit_class_percent": {
+          "1": 6.019134811730288,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0
+        }
+      }
+    }
+  },
+  "criteria": {
+    "requested_max_percent": 8.0,
+    "fine_grid_passed": true,
+    "all_independent_grids_passed": true,
+    "fine_vs_quarter_degree_difference_pp": 0.003097308154741185,
+    "tray_and_antenna_zero_hits_all_grids": true,
+    "exact_52deg_tray_and_antenna_zero_hits": true,
+    "analytic_tray_clearance_mm": 0.9000000000000021,
+    "requested_max_vertical_clearance_mm": 1.0,
+    "vertical_clearance_passed": true,
+    "upper_fov_entirely_clear": false
+  },
+  "post_diameter_mm": 3.1,
+  "base_and_root_strengthening_unchanged": true,
+  "class_codes": {
+    "0": "no new-hardware hit",
+    "1": "posts",
+    "2": "tray",
+    "3": "lower clamp/ears",
+    "4": "antenna envelope"
+  },
+  "source_manual": "https://terra-1-g.djicdn.com/851d20f7b9f64838a34cd02351370894/Livox/Livox_Mid-360_User_Manual_EN.pdf",
+  "source_specs": "https://www.livoxtech.com/mid-360/specs",
+  "upper_boundary_52deg_hits_by_class": {
+    "v5": {
+      "0": 2661,
+      "1": 219,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    },
+    "v6": {
+      "0": 2655,
+      "1": 225,
+      "2": 0,
+      "3": 0,
+      "4": 0
+    }
+  },
+  "tray_min_elevation_deg": 52.799796541591164,
+  "height_reduction_from_v5_mm": 2.478500827366105,
+  "v6_step_sha256": "30ec1b9ac3612ba875d8bd8dfbc95ccb349e6b188cf7e0fe7826e7bd05a83074",
+  "limitations": [
+    "The 8 percent condition applies only to this sampled geometric solid-angle model, not measured point loss.",
+    "O is a point-cloud coordinate reference, not a verified emitting/receiving pupil.",
+    "Beam divergence, refraction and non-repetitive dwell distribution are not modelled.",
+    "Only new support and antenna envelope are included; cable, SMA connector, fasteners and existing rig are excluded.",
+    "Zero tray/antenna hits does not mean zero upper-FOV obstruction: three post sectors remain.",
+    "Raising the narrow posts reduces stiffness; no strength, creep or physical trial-fit validation is claimed."
+  ]
+}

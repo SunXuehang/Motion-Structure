@@ -1,0 +1,98 @@
+{
+  "selected_version": "V6",
+  "design_approved_by_user": true,
+  "approval_date": "2026-10-28",
+  "physical_trial_fit_and_strength_validated": false,
+  "selected_printable_part": "step/rtk_antenna_mount_v6.step",
+  "selected_standing_assembly": "step/standing_device_with_rtk_v6.step",
+  "key_files": [
+    "step/rtk_antenna_mount_v6.step",
+    "step/standing_device_with_rtk_v6.step",
+    "reports/rtk_mount_v6_parameters.json",
+    "reports/rtk_mount_v6_angular_shadow.npz",
+    "tests/rtk_mount_baseline_v2.step",
+    "tests/rtk_mount_baseline_v5.step",
+    "tests/rtk_mount_baseline_v5_parameters.json",
+    "README_RTK.md",
+    "requirements_rtk.txt",
+    "scripts/build_rtk_mount.py",
+    "scripts/analyze_rtk_occlusion.py",
+    "scripts/render_rtk_shadow_3d.py",
+    "scripts/verify_rtk_viewer.cjs",
+    "src/bracket/rtk_geometry.py",
+    "src/bracket/rtk_shadow.py",
+    "reports/rtk_mount_review_v6_20261028.json",
+    "reports/rtk_scan_occlusion_v6_20261028.json",
+    "reports/rtk_shadow_3d_v6_20261028.json",
+    "reports/rtk_shadow_viewer_qa_v6_20261028.json",
+    "renders/rtk_scan_occlusion_3d_v6_20261028.html",
+    "renders/rtk_scan_occlusion_3d_v6_20261028.png",
+    "reports/rtk_mount_v6_browser_qa.json"
+  ],
+  "copied_file_provenance": [
+    {
+      "file": "step/rtk_antenna_mount_v6.step",
+      "archived_source": "exports/rtk_mount_review_v6_20261028/mount_body_REVIEW.step",
+      "archived_source_sha256": "30ec1b9ac3612ba875d8bd8dfbc95ccb349e6b188cf7e0fe7826e7bd05a83074"
+    },
+    {
+      "file": "step/standing_device_with_rtk_v6.step",
+      "archived_source": "exports/rtk_mount_review_v6_20261028/standing_device_with_rtk_REVIEW.step",
+      "archived_source_sha256": "16314df176791fd27333b902576c9e4ee6ec6bb0e583217ed647f605863a394b"
+    },
+    {
+      "file": "reports/rtk_mount_v6_parameters.json",
+      "archived_source": "exports/rtk_mount_review_v6_20261028/parameters_REVIEW.json",
+      "archived_source_sha256": "0000814e5d36165c4c314bd95cbd5a64721e6b9fb88961722e0dd01ac9503130"
+    },
+    {
+      "file": "reports/rtk_mount_v6_angular_shadow.npz",
+      "archived_source": "exports/rtk_mount_review_v6_20261028/angular_shadow_data.npz",
+      "archived_source_sha256": "8d857fd4acedd53ca0fe6f944d89ef1731d03598fd46e6587ed2bd834a21f8c1"
+    },
+    {
+      "file": "tests/rtk_mount_baseline_v2.step",
+      "archived_source": "exports/rtk_mount_review_v2_20261028/mount_body_REVIEW.step",
+      "archived_source_sha256": "2ffc14d41ed61c4e6a8401d0c29e3114e110f184f4839c364491a08eb1a5b8be"
+    },
+    {
+      "file": "tests/rtk_mount_baseline_v5.step",
+      "archived_source": "exports/rtk_mount_review_v5_20261028/mount_body_REVIEW.step",
+      "archived_source_sha256": "b8dbe6d682048bca397672230fdf805fc9e5713a562707e8b95cfbff82aa4c31"
+    },
+    {
+      "file": "tests/rtk_mount_baseline_v5_parameters.json",
+      "archived_source": "exports/rtk_mount_review_v5_20261028/parameters_REVIEW.json",
+      "archived_source_sha256": "24029a17c2e92e1b3e75d3983daa94b4775a11d06acca2b8b0b4edf7a5b3280b"
+    }
+  ],
+  "artifact_fingerprint_note": "archived_source_sha256 identifies the approved export. Later STEP regeneration may change headers; the live optical report fingerprints the current STEP.",
+  "source_history_in_exports_preserved": true,
+  "new_repository_directories_created": false,
+  "reproduction_verification": {
+    "staged_files_only": true,
+    "external_input": "Official MID-360 STEP with validated SHA-256",
+    "requires_original_exports": false,
+    "tests_passed": 68,
+    "parameters_identical_to_selected_export": true,
+    "step_data_comparison": {
+      "rtk_antenna_mount_v6.step": {
+        "data_section_exactly_identical": true,
+        "data_section_identical_except_string_labels": true,
+        "normalized_data_sha256": "2040ee34089a0b59f9ff1923aad5f8a76abee51a66d13fb1942ba7c5ef0ef469"
+      },
+      "standing_device_with_rtk_v6.step": {
+        "data_section_exactly_identical": false,
+        "data_section_identical_except_string_labels": true,
+        "normalized_data_sha256": "24b9a6843aea4da2eea5681064eb35dcc9a9ef15408762b398a2155847922e95"
+      }
+    },
+    "fine_shadow_percent": 6.019134811730288,
+    "browser_qa": {
+      "canvasCount": 2,
+      "pageErrors": [],
+      "rotationApplied": true
+    },
+    "comparison_note": "Coincident-solid Boolean subtraction was not a reliable equality test. Raw mount STEP DATA is identical; assembly differs only in writer-generated string labels."
+  }
+}

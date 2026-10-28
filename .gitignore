@@ -15,3 +15,20 @@ renders/*.png
 !renders/handheld_stack_exploded_preview.png
 renders/*.stl
 renders/*.FCStd
+
+# 已选用的 V6 参数、验证数据与预览纳入版本管理
+!reports/rtk_mount_v6_parameters.json
+!reports/rtk_mount_review_v6_20261028.json
+!reports/rtk_scan_occlusion_v6_20261028.json
+!reports/rtk_shadow_3d_v6_20261028.json
+!reports/rtk_shadow_viewer_qa_v6_20261028.json
+!reports/rtk_mount_v6_browser_qa.json
+!reports/rtk_mount_v6_selection.json
+!renders/rtk_scan_occlusion_3d_v6_20261028.png
+
+# 旧版审阅图、参考资料及可重新下载的官方 CAD 留在本地
+renders/rtk_scan_occlusion_3d_v4_20261028.html
+renders/rtk_scan_occlusion_3d_v5_20261028.html
+renders/rtk_scan_occlusion_v3_20261028.svg
+reports/rtk_mount_sources/
+vendor/livox/*.stp

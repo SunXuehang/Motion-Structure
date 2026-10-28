@@ -1,0 +1,7 @@
+# Preserve exact STEP bytes used by the V6 provenance and ray-tracing reports.
+step/rtk_antenna_mount_v6.step binary
+step/standing_device_with_rtk_v6.step binary
+tests/rtk_mount_baseline_v2.step binary
+tests/rtk_mount_baseline_v5.step binary
+# Generated offline viewer includes the Plotly bundle; regenerate instead of merging.
+renders/rtk_scan_occlusion_3d_v6_20261028.html binary

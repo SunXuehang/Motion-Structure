@@ -1,0 +1,21 @@
+{
+  "html": "renders/rtk_scan_occlusion_3d_v6_20261028.html",
+  "post_diameter_mm": 3.1,
+  "projected_percent": 6.019134811730288,
+  "fine_grid_deg": 0.125,
+  "display_grid_deg": [
+    1,
+    0.5
+  ],
+  "display_radius_mm": [
+    160,
+    65
+  ],
+  "display_mesh_decimation": "Radar reference only; optical calculations use full refined CAD meshes.",
+  "radar_display_triangles": 9539,
+  "mount_display_triangles": 9292,
+  "data_mask_key": "v6_mask",
+  "render_data_percent": 6.019134811730287,
+  "tray_vertical_clearance_mm": 0.9000000000000021,
+  "source_step_sha256": "30ec1b9ac3612ba875d8bd8dfbc95ccb349e6b188cf7e0fe7826e7bd05a83074"
+}

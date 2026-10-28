@@ -1,0 +1,210 @@
+{
+  "parameters": {
+    "status": "REVIEW PROTOTYPE - NOT A RELEASED PRINT DESIGN",
+    "ring_nominal_diameter_mm": 51.0,
+    "ring_cad_cylindrical_band_z_mm": [
+      34.0171,
+      38.4991
+    ],
+    "clamp_inner_diameter_mm": 51.2,
+    "clamp_radial_wall_mm": 3.5,
+    "clamp_bottom_z_mm": 34.25,
+    "clamp_contact_height_mm": 4.0,
+    "split_gap_mm": 0.8,
+    "clamp_screw_hole_diameter_mm": 3.4,
+    "clamp_screw_count": 1,
+    "printed_part_count": 1,
+    "heatset_pilot_diameter_mm": 4.0,
+    "heatset_pilot_depth_mm": 3.0,
+    "heatset_specification": "M3 brass insert; pilot dimensions reused directly from Part A parameters",
+    "lug_half_x_mm": 7.0,
+    "lug_y_center_mm": 30.8,
+    "lug_y_width_mm": 9.0,
+    "lug_height_mm": 6.8,
+    "post_count": 3,
+    "post_center_radius_mm": 28.3,
+    "post_top_center_radius_mm": 11.0,
+    "post_profile": "circular arc, vertical tangent at fixed lower endpoint",
+    "post_angles_deg": [
+      90.0,
+      210.0,
+      330.0
+    ],
+    "post_diameter_mm": 3.1,
+    "post_root_diameter_mm": 5.0,
+    "post_root_tip_diameter_mm": 4.0,
+    "post_root_blend_height_mm": 3.0,
+    "antenna_diameter_mm": 43.6,
+    "antenna_height_mm": 40.8,
+    "antenna_mount_thread": "#3-48 UNC (3 screws, Harxon official specification)",
+    "antenna_hole_triangle_side_mm": 23.0,
+    "antenna_hole_pitch_source": "User supplied; not independently verified in a manufacturer mechanical drawing",
+    "antenna_screw_clearance_diameter_mm": 3.0,
+    "plate_diameter_mm": 48.0,
+    "plate_thickness_mm": 4.0,
+    "sma_center_opening_diameter_mm": 14.0,
+    "sma_downward_height_user_mm": 16.5,
+    "target_tray_vertical_fov_clearance_mm": 0.9,
+    "height_control": "Tray underside outer edge, vertical distance above the nominal 52 degree cone from O",
+    "reference_origin_z_mm": 47.0,
+    "published_upper_fov_deg": 52.0,
+    "sma_width_and_cable_bend_radius": "Unspecified; central opening and rear under-plate path require trial fit",
+    "mount_face_above_glass_apex_mm": 22.521499172633895,
+    "sma_nominal_vertical_clearance_mm": 6.021499172633895,
+    "height_increase_from_v4_mm": 2.521499172633895,
+    "height_reduction_from_v5_mm": 2.478500827366105,
+    "glass_apex_z_mm": 60.0971,
+    "antenna_mount_face_z_mm": 82.61859917263389,
+    "plate_bottom_z_mm": 78.61859917263389,
+    "tray_min_elevation_from_O_deg": 52.799796541591164,
+    "tray_clearance_above_52deg_at_outer_edge_mm": 0.9000000000000021,
+    "post_arc_radius_mm": 70.79008639399954,
+    "post_arc_angle_deg": 40.920820263897134,
+    "post_root_z_mm": 36.25
+  },
+  "units": "mm",
+  "reference_frame": "MID-360 bottom mount plane Z=0, rear connector along -Y",
+  "antenna_axes_xy_mm": [
+    [
+      13.279056191361393,
+      0.0
+    ],
+    [
+      -6.639528095680694,
+      11.500000000000002
+    ],
+    [
+      -6.639528095680703,
+      -11.499999999999998
+    ]
+  ],
+  "clamp_axes_yz_mm": [
+    [
+      -30.8,
+      37.65
+    ]
+  ],
+  "post_axes_xy_mm": [
+    [
+      1.7328752207935049e-15,
+      28.3
+    ],
+    [
+      -24.50851892709961,
+      -14.150000000000004
+    ],
+    [
+      24.508518927099608,
+      -14.150000000000013
+    ]
+  ],
+  "post_top_axes_xy_mm": [
+    [
+      6.735557395310443e-16,
+      11.0
+    ],
+    [
+      -9.526279441628825,
+      -5.500000000000001
+    ],
+    [
+      9.526279441628823,
+      -5.500000000000005
+    ]
+  ],
+  "base_region_symmetric_difference_vs_v2_mm3": 0.0,
+  "ear_region_symmetric_difference_vs_v2_mm3": 0.0,
+  "mount_bounds_mm": {
+    "min": [
+      -29.1,
+      -35.3,
+      34.25
+    ],
+    "max": [
+      29.1,
+      30.8,
+      82.618599
+    ],
+    "size": [
+      58.2,
+      66.1,
+      48.368599
+    ]
+  },
+  "mount_volume_mm3": 10509.536110139095,
+  "mount_solid_count": 1,
+  "heatset_dimension_source": {
+    "file": "src/bracket/parameters.py",
+    "diameter_parameter": "a_insert_hole_diameter",
+    "depth_parameter": "a_insert_hole_depth"
+  },
+  "heatset_layout": "Right ear outer face: Ø4 x 3 seat; coaxial Ø3.4 passage; left ear Ø3.4 through-hole.",
+  "nominal_interference": {
+    "mount_mid_mm3": 0.0
+  },
+  "installation_path_samples": [
+    {
+      "upward_offset_mm": 0,
+      "overlap_mm3": 0.0
+    },
+    {
+      "upward_offset_mm": 5,
+      "overlap_mm3": 0.0
+    },
+    {
+      "upward_offset_mm": 10,
+      "overlap_mm3": 0.0
+    },
+    {
+      "upward_offset_mm": 20,
+      "overlap_mm3": 0.0
+    },
+    {
+      "upward_offset_mm": 30,
+      "overlap_mm3": 0.0
+    }
+  ],
+  "compliance_note": "Undeformed nominal geometry only. Ring expansion, the stiffening effect of the three columns and top tray, clamping pressure, friction and creep are not simulated.",
+  "tilt_checks": [
+    {
+      "angle_deg": 0,
+      "new_parts_vs_B_overlap_mm3": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "angle_deg": 20,
+      "new_parts_vs_B_overlap_mm3": [
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "angle_deg": 40,
+      "new_parts_vs_B_overlap_mm3": [
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "sources": {
+    "antenna_official": "https://www.harxon.com/product/detail/2",
+    "user_link": "https://www.indianhobbycenter.com/products/harxon-hx-cux623a-low-profile-high-performance-helix-antenna-for-uavs-and-surveying",
+    "mid360_download": "https://www.livoxtech.com/mid-360/downloads",
+    "mid360_sha256": "b93e9b51282ed319b6aa755e76a132c0eb03306da5f3b9676bcabf2e2ae25f02",
+    "manual": "https://terra-1-g.djicdn.com/851d20f7b9f64838a34cd02351370894/Livox/Livox_Mid-360_User_Manual_EN.pdf"
+  },
+  "limitations": [
+    "Official Livox manual states MID-360 must not bear extra payload; this clamp is not a manufacturer-approved load-bearing interface.",
+    "Ring material identification is inferred from the manual figure and CAD location, not certified material metadata.",
+    "Ring diameter, exposed band height and clamping force require physical verification; the 0.1 mm clearance is provisional.",
+    "Antenna triangle pitch and SMA height were supplied by the user; no official drawing with thread depth was found.",
+    "Antenna solid is only a cylindrical envelope. Screws, nuts and the SMA cable are not modelled.",
+    "The three supports and local screw ears may obstruct LiDAR rays. No zero-occlusion claim is made.",
+    "No camera-reference interference, full optical analysis, structural load analysis, or physical trial fit was performed.",
+    "A continuous top tray links all three columns; actual elastic opening and clamping compliance require physical trial fit.",
+    "Heat-set pilot diameter and depth match Part A defaults; actual brass insert fit and screw engagement remain to be verified.",
+    "PLA print orientation, supports, threaded-fastener lengths and screw engagement depth are not released manufacturing specifications."
+  ]
+}

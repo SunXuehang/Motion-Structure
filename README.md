@@ -8,10 +8,15 @@
 几何由 Python + FreeCAD 生成，包含雷达倾斜支架、开发板上下盖板，以及两种可替换的手柄。
 尺寸单位均为 **mm**；传感器、开发板、电池包和金属紧固件属于外购件或参考模型。
 
+2026-10-28 已确认采用 **V6 GNSS 天线支架**：三个 Ø3.1 内收圆弧柱、单螺丝抱箍及热熔螺母孔。
+托盘外缘高于名义 52° 扫描边界的竖向余量为 0.90 mm；几何遮挡约 6.02%。
+参数、已知限制、三维图与独立 OCP 复现入口见 [RTK 支架说明](README_RTK.md)。结构已选定，实物试装与强度验证仍待完成。
+
 ## 结构件与 STEP 文件
 
-四个共用件配合一种手柄使用：**站立手柄方案共 5 个打印件；电池手柄方案共 6 个打印件**。
-当前共有 7 种独立打印件，上盖板的两个方向文件是同一结构的打印摆放方案，不增加零件数量。
+四个共用件配合一种手柄使用：未加 RTK 支架时，**站立手柄方案共 5 个打印件；电池手柄方案共 6 个打印件**。
+安装 V6 RTK 支架后分别为 6 件和 7 件；RTK 的整机装配仅核对了站立手柄方案。
+当前共有 8 种独立打印件，上盖板的两个方向文件是同一结构的打印摆放方案，不增加零件数量。
 
 | 结构件 | STEP 文件 | 当前主要尺寸或用途 |
 |---|---|---|
@@ -22,6 +27,7 @@
 | 站立手柄 | [standing_handle_body.step](step/standing_handle_body.step) | Ø42 空心握把、104 × 88 支脚，总高 118 |
 | 电池手柄本体 | [battery_grip_body.step](step/battery_grip_body.step) | 外 Ø50、内 Ø44，容纳边长 36 × 高 78 的三角柱电池包 |
 | 电池手柄底盖 | [battery_grip_bottom_cap.step](step/battery_grip_bottom_cap.step) | Ø50 × 4，3 个 M3 安装孔 |
+| V6 RTK 天线支架 | [rtk_antenna_mount_v6.step](step/rtk_antenna_mount_v6.step) | 一体抱箍、3 × Ø3.1 圆弧柱、Ø48 × 4 托盘；待试装 |
 
 表中的板厚不包含隔柱、围挡或耳板高度。B 件包含相机托板后的平面包络为 128 × 98。
 
@@ -30,10 +36,12 @@
 - [board_and_bracket_all_parts.step](step/board_and_bracket_all_parts.step)：四个共用件在 256 × 256 打印床上的排布，不含任何手柄。
 - [board_cover_upper_optA_topfacedown.step](step/board_cover_upper_optA_topfacedown.step)：上盖板顶面朝下方案。
 - [board_cover_upper_optB_topfaceup.step](step/board_cover_upper_optB_topfaceup.step)：上盖板顶面朝上方案。
+- [standing_device_with_rtk_v6.step](step/standing_device_with_rtk_v6.step)：站立手柄、V6 支架、官方雷达 CAD 与天线包络的装配参考；不作为单件打印文件。
 
 标准导出函数将六个电池手柄方案的独立件按指定姿态放到 Z = 0、XY 居中，并检查实体与 STEP 回读。
 **站立手柄和两个上盖板方向文件尚未接入标准导出脚本**；使用这些现有文件时需在切片软件中确认摆放与支撑。
 电池手柄本体和底盖另有双件排版生成入口，见[第 4 节](#4-当前文件与生成方式)。
+V6 RTK 使用独立的 [build_rtk_mount.py](scripts/build_rtk_mount.py)，尚未接入该标准 FreeCAD 导出流程；其 STEP 保留雷达底面 Z=0 的装配坐标。
 
 ## 快速开始
 
@@ -248,6 +256,8 @@ D435i 托板与 B 一体生成，位于 +Y 前侧，尺寸 92 × 20 × 4、平�
 | [step_package.py](src/bracket/step_package.py) | 六个标准独立 STEP + 四件合并 STEP |
 | [print_plate.py](src/bracket/print_plate.py) | 四个共用件的 256 × 256 打印床排布 |
 | [exploded_view.py](src/bracket/exploded_view.py) | 电池手柄方案的爆炸动画 |
+| [build_rtk_mount.py](scripts/build_rtk_mount.py) | 已选定 V6 的 OCP 几何、装配、孔位、实体及干涉检查 |
+| [analyze_rtk_occlusion.py](scripts/analyze_rtk_occlusion.py)、[render_rtk_shadow_3d.py](scripts/render_rtk_shadow_3d.py) | V6 遮挡分析、V5 对照与离线三维图；见 [RTK 复现说明](README_RTK.md) |
 
 ### 输出与覆盖范围
 

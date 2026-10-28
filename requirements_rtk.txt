@@ -1,0 +1,5 @@
+# Selected V6 OCP pipeline; independent of the standard FreeCAD entry points.
+cadquery-ocp==8.0.1.1.0
+vtk==9.6.2
+numpy==2.3.5
+plotly==7.1.0
