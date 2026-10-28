@@ -1,8 +1,8 @@
 # 手持式 MID-360 扫描装置 · 参数化结构件
 
-![手持式 MID-360 扫描装置装配预览](renders/handheld_stack_exploded_preview.png)
+![当前完整结构：站立手柄与 V6 RTK 天线支架](renders/current_structure_v6.png)
 
-上图为早期电池手柄方案的视频首帧，供理解装配关系；尚未反映后续护壁、热熔螺母孔和站立手柄的变化。当前尺寸以源码参数和下文说明为准。
+上图直接依据[当前整机 STEP](step/standing_device_with_rtk_v6.step) 绘制，展示站立手柄方案的 6 个打印件、MID-360 和 GNSS 天线外形包络。右侧为顶部安装细节；相机、开发板、线缆和金属紧固件未显示。
 
 本项目为 Livox MID-360 激光雷达、RealSense D435i 和 UAV V3 开发板提供 PLA 打印结构件。
 几何由 Python + FreeCAD 生成，包含雷达倾斜支架、开发板上下盖板，以及两种可替换的手柄。
@@ -11,6 +11,14 @@
 2026-10-28 已确认采用 **V6 GNSS 天线支架**：三个 Ø3.1 内收圆弧柱、单螺丝抱箍及热熔螺母孔。
 托盘外缘高于名义 52° 扫描边界的竖向余量为 0.90 mm；几何遮挡约 6.02%。
 参数、已知限制、三维图与独立 OCP 复现入口见 [RTK 支架说明](README_RTK.md)。结构已选定，实物试装与强度验证仍待完成。
+
+## 当前扫描遮挡（V6）
+
+![V6 三维扫描遮挡示意图](renders/rtk_scan_occlusion_3d_v6_20261028.png)
+
+橙色为三根立柱产生的窄扇区阴影，按手册 O 点投影计算的新增件遮挡立体角占比为 **6.02%**。托盘和天线包络在名义 360°、−7°～52° 视场内无命中，托盘外缘高于 52° 边界的竖向余量为 **0.90 mm**。
+这不表示整个上部视场完全无遮挡，百分比也不是实测丢点率；线缆、接头实体及真实光学孔径未计入。
+可下载[交互三维遮挡图](renders/rtk_scan_occlusion_3d_v6_20261028.html) 后用浏览器旋转查看，计算细节见[遮挡报告](reports/rtk_scan_occlusion_v6_20261028.json)。
 
 ## 结构件与 STEP 文件
 
@@ -265,7 +273,9 @@ D435i 托板与 B 一体生成，位于 +Y 前侧，尺寸 92 × 20 × 4、平�
 - `exports/all_PLA_parts_256x256_print_plate.step`：由 `build_print_plate.py` 生成，包含四个共用件。
 - `exports/battery_grip_256x256_print_plate.step`：由 `build_battery_grip.py` 生成，包含本体和底盖；本体法兰朝下，两件由代码旋转并放到 Z = 0。具体悬空面与支撑设置需在切片中确认。
 - `models/`、`exports/`、`reports/`：分别保存模型、导出物和校验报告；相关生成物受 `.gitignore` 管理。
-- `renders/handheld_stack_exploded_preview.png`：README 使用的已跟踪静态预览。
+- `renders/current_structure_v6.png`：当前 README 整机示意图，由 `python scripts/render_current_structure.py` 从已提交的整机 STEP 生成。
+- `renders/rtk_scan_occlusion_3d_v6_20261028.png`：当前 README 扫描遮挡图；重建方法见 [RTK 说明](README_RTK.md)。
+- `renders/handheld_stack_exploded_preview.png`：保留的历史电池手柄动画首帧，不代表当前采用结构。
 - `renders/handheld_stack_exploded.mp4`：保留并已跟踪的动画文件，README 不嵌入视频。预览图是单独截取的首帧，动画脚本不会同步刷新它。
 
 整机输出入口 `build_board_bracket_assembly.py` 使用电池手柄方案，包含 6 个打印件和

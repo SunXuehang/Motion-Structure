@@ -27,7 +27,10 @@
     "reports/rtk_shadow_viewer_qa_v6_20261028.json",
     "renders/rtk_scan_occlusion_3d_v6_20261028.html",
     "renders/rtk_scan_occlusion_3d_v6_20261028.png",
-    "reports/rtk_mount_v6_browser_qa.json"
+    "reports/rtk_mount_v6_browser_qa.json",
+    "scripts/render_current_structure.py",
+    "renders/current_structure_v6.png",
+    "reports/current_structure_v6_render.json"
   ],
   "copied_file_provenance": [
     {

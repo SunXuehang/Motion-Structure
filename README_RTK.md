@@ -3,6 +3,8 @@
 2026-10-28 用户确认采用 V6。用于在 MID-360 顶部安装 HARXON HX-CUX623A。
 本次将已选定结构及其复现、验证材料从审阅导出区纳入现有仓库目录；结构仍待实物试装和强度验证。
 
+![当前完整结构与顶部安装细节](renders/current_structure_v6.png)
+
 ![V6 三维扫描遮挡](renders/rtk_scan_occlusion_3d_v6_20261028.png)
 
 ## 先看这些文件
@@ -60,6 +62,7 @@ python -m pip install -r requirements_rtk.txt
 python scripts/build_rtk_mount.py
 python scripts/analyze_rtk_occlusion.py
 python scripts/render_rtk_shadow_3d.py
+python scripts/render_current_structure.py
 ```
 
 生成器和分析器保留真实孔位、单实体、STEP 回读、无干涉、固定底部与收敛网格等断言。

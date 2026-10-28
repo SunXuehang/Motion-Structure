@@ -1,0 +1,33 @@
+{
+  "source_step": "step/standing_device_with_rtk_v6.step",
+  "source_step_sha256": "16314df176791fd27333b902576c9e4ee6ec6bb0e583217ed647f605863a394b",
+  "png": "renders/current_structure_v6.png",
+  "pixel_size": [
+    2200,
+    1540
+  ],
+  "solid_count": 14,
+  "top_level_parts": 8,
+  "printed_part_count": 6,
+  "assembly_bounds_mm": {
+    "min": [
+      -64.0,
+      -47.5,
+      -123.5
+    ],
+    "max": [
+      64.0,
+      59.0,
+      196.570799
+    ],
+    "size": [
+      128.0,
+      106.5,
+      320.070799
+    ]
+  },
+  "display_triangles": 27356,
+  "geometry_changed": false,
+  "display_only_decimation": true,
+  "includes_radar_non_solid_faces": true
+}

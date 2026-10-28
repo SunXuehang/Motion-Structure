@@ -25,6 +25,8 @@ renders/*.FCStd
 !reports/rtk_mount_v6_browser_qa.json
 !reports/rtk_mount_v6_selection.json
 !renders/rtk_scan_occlusion_3d_v6_20261028.png
+!renders/current_structure_v6.png
+!reports/current_structure_v6_render.json
 
 # 旧版审阅图、参考资料及可重新下载的官方 CAD 留在本地
 renders/rtk_scan_occlusion_3d_v4_20261028.html
