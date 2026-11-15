@@ -61,8 +61,33 @@ def test_two_thin_ears_have_equal_m3_clearance_holes_for_bolt_and_nut(model):
         assert state(shape, side*1.5, -30.94, 37.65) == TopAbs_OUT
         assert state(shape, side*1.5, -29.34, 37.65) == TopAbs_OUT
         assert state(shape, side*1.5, -29.14, 37.65) == TopAbs_IN
-        assert state(shape, side*3.2, -28.74, 37.65) == TopAbs_OUT
+        assert state(shape, side*3.8, -28.74, 37.65) == TopAbs_OUT
     assert state(shape, 0, -30.94, 37.65) == TopAbs_OUT
+
+
+def test_two_mm_closing_gap_preserves_two_point_six_mm_ears(model):
+    shape, _, _ = model
+    for side in [-1, 1]:
+        assert state(shape, side*.9, -28.74, 37.65) == TopAbs_OUT
+        assert state(shape, side*1.1, -28.74, 37.65) == TopAbs_IN
+        assert state(shape, side*3.5, -28.74, 37.65) == TopAbs_IN
+        assert state(shape, side*3.7, -28.74, 37.65) == TopAbs_OUT
+
+
+def test_inner_ribs_match_mid360_groove_phase_and_contact_band(model):
+    shape, _, _ = model
+    # Official CAD: forty R1 grooves on R26.3 centers, every nine degrees.
+    for angle in range(0, 360, 9):
+        if angle == 270:  # The rear tightening slit interrupts this groove.
+            continue
+        a = math.radians(angle)
+        for z in [34.6, 36.5, 37.9]:
+            assert state(shape, 25.5*math.cos(a), 25.5*math.sin(a), z) == TopAbs_IN
+            assert state(shape, 25.35*math.cos(a), 25.35*math.sin(a), z) == TopAbs_OUT
+        between = math.radians(angle+4.5)
+        assert state(shape, 25.5*math.cos(between), 25.5*math.sin(between), 36.5) == TopAbs_OUT
+    for z in [34.0, 38.5]:
+        assert state(shape, 25.5, 0, z) == TopAbs_OUT
 
 
 def test_clamp_is_thinner_rounded_and_bolt_tools_have_axial_access(model):

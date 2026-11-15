@@ -1,6 +1,6 @@
 {
   "source_step": "step/rtk_antenna_mount_v6_metal.step",
-  "source_step_sha256": "1cfd2adc74fde28957b993407b3dbcdf2f28db69306ced012b310ebb65b0f471",
+  "source_step_sha256": "8e22c3a329f80fc3817c5c9de1ea6a20fa03001ea2471cdef333f696e5b6ab26",
   "geometry_modified": false,
   "edge_sampling_deflection_mm": 0.003,
   "horizontal_plane": {
@@ -14,7 +14,7 @@
       0,
       1
     ],
-    "section_edge_count": 27,
+    "section_edge_count": 113,
     "max_plane_residual_mm": 0.0,
     "material_face_count": 3
   },
@@ -32,7 +32,7 @@
         6.123233995736766e-17,
         0.0
       ],
-      "section_edge_count": 29,
+      "section_edge_count": 32,
       "max_plane_residual_mm": 1.715743480079471e-15,
       "material_face_count": 3
     },

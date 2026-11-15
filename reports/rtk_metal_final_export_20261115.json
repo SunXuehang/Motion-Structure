@@ -1,11 +1,13 @@
 {
   "status": "FINALIZED GEOMETRY - MANUFACTURING AND PHYSICAL VALIDATION PENDING",
-  "approval_date": "2026-11-15",
+  "geometry_finalized_date": "2026-11-15",
+  "design_approved_by_user": true,
+  "geometry_revision": "2 mm closing gap and MID-360 matched contact ribs",
   "units": "mm",
   "part_step": "exports/rtk_antenna_mount_metal_final.step",
-  "part_step_sha256": "37ddfb02fb18cef59499ea7e15e2b773783178de8c5f7ec4d7cad25b2d244743",
+  "part_step_sha256": "a3c8c8fd8bc4d6c3a1ac78f579ad3357f1c98c1fff0a4f05f7d38995b8b6ffc8",
   "source_step": "step/rtk_antenna_mount_v6_metal.step",
-  "source_step_sha256": "1cfd2adc74fde28957b993407b3dbcdf2f28db69306ced012b310ebb65b0f471",
+  "source_step_sha256": "8e22c3a329f80fc3817c5c9de1ea6a20fa03001ea2471cdef333f696e5b6ab26",
   "geometry_report": "reports/rtk_mount_v6_metal_20261115.json",
   "solid_count": 1,
   "step_readback_valid": true,
@@ -26,16 +28,36 @@
       48.468599
     ]
   },
-  "volume_mm3": 4618.0165881670255,
-  "export_volume_difference_mm3": 0.0001259100881725317,
+  "volume_mm3": 4636.028140577478,
+  "export_volume_difference_mm3": 0.00010090277191920904,
   "coordinate_frame": "Original radar assembly coordinates preserved; radar mounting plane Z=0",
-  "fastener": "M3 through bolt with external nut; both clamp holes diameter 3.4 mm, no tapping",
+  "clamp_split_gap_mm": 2.0,
+  "matched_contact_pattern": {
+    "official_groove_count": 40,
+    "angular_pitch_deg": 9.0,
+    "phase_deg": 0.0,
+    "groove_center_radius_mm": 26.3,
+    "official_groove_radius_mm": 1.0,
+    "rib_radius_mm": 0.9,
+    "nominal_profile_clearance_mm": 0.1,
+    "rib_z_mm": [
+      34.25,
+      38.25
+    ],
+    "minimum_rib_tip_radius_mm": 25.400000000000002,
+    "note": "Ribs align with the reference sensor recesses. The rear closing slit interrupts one rib; clock the part to the sensor grooves."
+  },
   "nut_rotation_envelope_diameter_mm": 7.0,
   "nut_maximum_diameter_mm": 6.0,
   "nut_radial_clearance_mm": 0.5,
-  "cleanup_archive": "../Motion-Structure-archive/20261115-metal-final/",
+  "preview": "renders/rtk_antenna_mount_v6_metal.png",
+  "preview_sha256": "7e8c91a571554a914dc5c580afbfcbab2267e28ceb8801bd412cfb9ecb78410d",
+  "viewer": "renders/rtk_antenna_mount_v6_metal.html",
+  "viewer_sha256": "bee03b27b741b9dcee12b1213387c1898f5d925570c3fc6ac47356eb4aaba3f6",
+  "contact_section": "renders/rtk_metal_mid360_contact.png",
+  "contact_section_sha256": "58724eac3d9fe49e0edf5febf4f4fd77f7b26b6532282b7ce1d49c5b842756aa",
   "verification": {
-    "tests_passed": 72,
+    "tests_passed": 74,
     "test_files": [
       "tests/test_dimensions.py",
       "tests/test_kinematics.py",
@@ -43,12 +65,6 @@
       "tests/test_rtk_mount_selection.py",
       "tests/test_rtk_metal.py"
     ],
-    "scope": "Relevant parameter, kinematics, source-selection and metal-geometry checks; physical validation pending"
-  },
-  "geometry_finalized_date": "2026-11-15",
-  "design_approved_by_user": true,
-  "preview": "renders/rtk_antenna_mount_v6_metal.png",
-  "preview_sha256": "fed2ef1b3ab13c2bca797370abf0b734e112e0f9a831a0da3c6b1df1dacf8a7c",
-  "viewer": "renders/rtk_antenna_mount_v6_metal.html",
-  "viewer_sha256": "113f319bb4bc301e4f62d06ffb7e06a3ebb1a31e444c474628b6ee9dcb8e38d5"
+    "scope": "Parameter, kinematics, original selection and metal-solid tests. Actual clamp force and print fit remain pending."
+  }
 }

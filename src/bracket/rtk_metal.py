@@ -21,6 +21,7 @@ METAL_PARAMS = {
     'status': 'FINALIZED GEOMETRY - MANUFACTURING AND PHYSICAL VALIDATION PENDING',
     'geometry_finalized_date': '2026-11-15',
     'design_approved_by_user': True,
+    'geometry_revision': '2 mm closing gap and MID-360 matched contact ribs',
     'candidate_materials': ['316L stainless steel', 'TC4 titanium alloy'],
     'top_thickness_mm': 2.0,
     'screw_pad_diameter_mm': 9.0,
@@ -39,7 +40,8 @@ METAL_PARAMS = {
     'clamp_radial_wall_mm': 2.0,
     'clamp_edge_radius_mm': 0.4,
     'lug_plan_corner_radius_mm': 1.2,
-    'lug_half_x_mm': 3.0,
+    'clamp_split_gap_mm': 2.0,
+    'lug_half_x_mm': 3.6,
     'lug_height_mm': 7.0,
     'lug_front_y_mm': -26.3,
     'lug_back_y_mm': -35.44,
@@ -50,6 +52,12 @@ METAL_PARAMS = {
     'clamp_clearance_diameter_mm': 3.4,
     'clamp_fastening': 'M3 through-bolt and separate external M3 nut; no tapped holes',
     'lug_thickness_each_mm': 2.6,
+    'contact_groove_count': 40,
+    'contact_groove_phase_deg': 0.0,
+    'contact_groove_center_radius_mm': 26.3,
+    'contact_groove_radius_mm': 1.0,
+    'contact_groove_clearance_mm': 0.1,
+    'contact_rib_end_radius_mm': 0.15,
 }
 
 
@@ -232,6 +240,7 @@ def blend_post_roots(shape, p):
 def build_metal_mount(p):
     """Return the full solid and its ring-linked top, in radar coordinates."""
     m = METAL_PARAMS
+    assert math.isclose(m['lug_half_x_mm']-m['clamp_split_gap_mm']/2, m['lug_thickness_each_mm'])
     seat = p['antenna_mount_face_z_mm']
     bottom = seat - m['top_thickness_mm']
     hole_radius = p['antenna_hole_triangle_side_mm'] / math.sqrt(3)
@@ -263,9 +272,18 @@ def build_metal_mount(p):
         shape = cut(shape, cylinder(p['antenna_screw_clearance_diameter_mm']/2, 5, x, y, bottom-1))
     shape = cut(shape, cylinder(m['clamp_clearance_diameter_mm']/2, 2*m['lug_half_x_mm']+2,
                                -m['lug_half_x_mm']-1, m['clamp_screw_y_mm'], screw_z, (1, 0, 0)))
-    shape = cut(shape, BRepPrimAPI_MakeBox(gp_Pnt(-p['split_gap_mm']/2, -60, ear_z-1),
-                    p['split_gap_mm'], 60, m['lug_height_mm']+2).Shape())
+    slit = BRepPrimAPI_MakeBox(gp_Pnt(-m['clamp_split_gap_mm']/2, -60, ear_z-1),
+                              m['clamp_split_gap_mm'], 60, m['lug_height_mm']+2).Shape()
+    shape = cut(shape, slit)
     shape = blend_post_roots(shape, p)
+    ribs = []
+    rib_radius = m['contact_groove_radius_mm']-m['contact_groove_clearance_mm']
+    for i in range(m['contact_groove_count']):
+        angle = math.radians(m['contact_groove_phase_deg']+i*360/m['contact_groove_count'])
+        x, y = (m['contact_groove_center_radius_mm']*math.cos(angle),
+                m['contact_groove_center_radius_mm']*math.sin(angle))
+        ribs.append(round_edges(cylinder(rib_radius, height, x, y, z0), m['contact_rib_end_radius_mm']))
+    shape = cut(fuse([shape]+ribs), slit)
     assert BRepCheck_Analyzer(shape).IsValid()
     assert h.count(shape, TopAbs_SOLID) == 1
     return shape, top

@@ -4,7 +4,7 @@
 
 ![V6 金属天线支架定稿：整体、顶部圆环与底部抱箍](renders/rtk_antenna_mount_v6_metal.png)
 
-2026-11-15 已定稿。下载[金属天线支架最终单件 STEP](exports/rtk_antenna_mount_metal_final.step)，或打开[离线三维查看器](renders/rtk_antenna_mount_v6_metal.html)。顶部采用 2 mm 厚圆环，抱箍一般区域壁厚 2 mm，柱根沿圆箍平滑加宽；两耳均为 Ø3.4 通孔，使用 M3 螺栓与外侧螺母，按 Ø6 螺母径向各留 0.5 mm 旋转余量。候选材料为 316L / TC4，具体工艺与实物强度仍待验证。
+2026-11-15 已定稿，按用户修订将收紧缝设为 **2.0 mm**，内侧增加与 MID-360 实际 40 个凹槽对位的圆弧纹。下载[金属天线支架最终单件 STEP](exports/rtk_antenna_mount_metal_final.step)，或打开[离线三维查看器](renders/rtk_antenna_mount_v6_metal.html)。顶部采用 2 mm 厚圆环，抱箍一般区域壁厚 2 mm，柱根沿圆箍平滑加宽；两耳各厚 2.6 mm、均为 Ø3.4 通孔，使用 M3 螺栓与外侧螺母，按 Ø6 螺母径向各留 0.5 mm 旋转余量。候选材料为 316L / TC4，具体工艺与实际紧固效果仍待验证。
 
 尺寸、截面图和加工要求见 [RTK 支架说明](README_RTK.md#v6-金属打印版2026-11-15)，文件指纹与 STEP 回读结果见[定稿导出记录](reports/rtk_metal_final_export_20261115.json)。
 

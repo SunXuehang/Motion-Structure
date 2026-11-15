@@ -34,6 +34,7 @@ renders/*.FCStd
 !renders/rtk_antenna_mount_v6_metal.png
 !renders/rtk_metal_base_section_markup.png
 !renders/rtk_metal_root_vertical_sections_markup.png
+!renders/rtk_metal_mid360_contact.png
 !reports/rtk_metal_sections_20261115.json
 !reports/rtk_metal_final_export_20261115.json
 reports/rtk_metal_*.log
