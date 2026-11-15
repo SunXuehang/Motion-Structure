@@ -1,11 +1,14 @@
 # 工作区与工具缓存
 .worktrees/
+.venv/
 __pycache__/
+.pytest_cache/
 
 # 代码生成的中间产物（step/ 是交付件，跟踪）
 models/*.FCStd
 models/*.FCBak
 exports/*
+!exports/rtk_antenna_mount_metal_final.step
 reports/*.json
 
 # renders/ 同时存放生成图与大体积参考网格
@@ -27,6 +30,13 @@ renders/*.FCStd
 !renders/rtk_scan_occlusion_3d_v6_20261028.png
 !renders/current_structure_v6.png
 !reports/current_structure_v6_render.json
+!reports/rtk_mount_v6_metal_20261115.json
+!renders/rtk_antenna_mount_v6_metal.png
+!renders/rtk_metal_base_section_markup.png
+!renders/rtk_metal_root_vertical_sections_markup.png
+!reports/rtk_metal_sections_20261115.json
+!reports/rtk_metal_final_export_20261115.json
+reports/rtk_metal_*.log
 
 # 旧版审阅图、参考资料及可重新下载的官方 CAD 留在本地
 renders/rtk_scan_occlusion_3d_v4_20261028.html

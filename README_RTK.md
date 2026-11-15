@@ -1,7 +1,47 @@
-# 已选定的 V6 RTK 天线支架
+# V6 RTK 天线支架（当前金属版已定稿）
 
 2026-10-28 用户确认采用 V6。用于在 MID-360 顶部安装 HARXON HX-CUX623A。
 本次将已选定结构及其复现、验证材料从审阅导出区纳入现有仓库目录；结构仍待实物试装和强度验证。
+
+## V6 金属打印版（2026-11-15）
+
+用户于 2026-11-15 确认当前金属版几何定稿，候选材料为 316L / TC4，保留原 V6。顶部三个孔位以圆环相连，柱根沿圆箍平滑加宽，底部抱箍减薄，收紧孔采用紧凑布局并保留螺母旋转空间。
+
+![金属版定稿：整体结构、顶部圆环和紧凑收紧孔](renders/rtk_antenna_mount_v6_metal.png)
+
+| 项目 | 本版尺寸 / 做法 |
+| --- | --- |
+| 顶部 | 2 mm 厚，4 mm 宽连接圆环，三个 Ø9 孔位台；保留 Ø3 通孔、23 mm 等边三角孔距及 V6 安装面高度 |
+| 顶部排列 | 三孔与三柱头共用 Ø26.5581 分布圆，每隔 60° 交替；孔为 30/150/270°，柱为 90/210/330°，取消偏置短筋 |
+| 抱箍 | 内径 Ø51.2；一般区域径向壁厚由 3.5 减至 2 mm；边缘 R0.4，耳板平面转角 R1.2 |
+| 三处柱根 | 按手绘红线制作约 17 mm 宽的长缓肩部，两端与圆箍相切；肩部上方与支柱接合处 R0.6，柱脚底边 R0.4 |
+| 外侧加强材料 | 保留原 Ø3.1 圆芯，在其外侧名义加厚 2 mm；切向宽度保持 3.1，靠近顶部的加强材料逐渐减薄，中心线不向外弯 |
+| 收紧孔 | Y=-30.94，Z=37.65，沿 X 贯穿两耳；较上一版再向圆箍靠近 2.31 mm，尾端同步缩至 Y=-35.44 |
+| 两侧耳板 | 均为 Ø3.4 通孔，每耳厚 2.6 mm、高 7 mm；M3 螺栓穿过，外侧独立螺母锁紧，无需攻牙 |
+| 螺母旋转空间 | 按用户给定的最大外形 Ø6 mm，径向各留 0.5 mm，采用 Ø7 mm 旋转包络；螺母对后侧名义圆箍的间隙约 0.50 mm |
+
+交付入口：
+
+- **最终导出单件**：[rtk_antenna_mount_metal_final.step](exports/rtk_antenna_mount_metal_final.step)，单位 mm，一个有效实体，保留装配坐标。
+- [生成器输出单件](step/rtk_antenna_mount_v6_metal.step)与[最终导出核验记录](reports/rtk_metal_final_export_20261115.json)
+- [金属版整机装配 STEP](step/standing_device_with_rtk_v6_metal.step)
+- [离线旋转查看器](renders/rtk_antenna_mount_v6_metal.html)
+- [参数与实体/装配/光学核验报告](reports/rtk_mount_v6_metal_20261115.json)
+- [给加工方的孔位说明](reports/rtk_v6_metal_manufacturing_20261115.md)
+
+定稿截面：
+
+![底部抱箍与三个柱根的水平截面](renders/rtk_metal_base_section_markup.png)
+
+![三个柱根与抱箍连接的径向竖直截面](renders/rtk_metal_root_vertical_sections_markup.png)
+
+金属版与原内收对称锥脚版使用相同中心投影协议比较，当前 0.5/0.25/0.125° 三档结果及新增被挡射线统计见[几何报告](reports/rtk_mount_v6_metal_20261115.json)。结论限于当前模型与采样射线，不代表实测丢点率或所有连续光线方向的证明。
+
+本版所有打印孔均**不攻牙**。抱箍两耳统一 Ø3.4 通孔，使用 M3 螺栓和外侧独立螺母；顶部三个天线孔仍为 Ø3 通孔。顶部减薄后，应重新确认原天线螺钉长度，避免顶到天线孔底。
+
+复现使用现有 `requirements_rtk.txt` 环境，运行 `python scripts/build_rtk_metal.py`。入口会输出单件、装配、预览、离线查看器及报告，执行 STEP 回读、雷达和天线包络干涉、工具通道、安装路径抽样、0/20/40° 与 B 件的干涉。遮挡使用 0.5/0.25/0.125° 三档网格，与保存的对称锥脚版 `tests/rtk_mount_metal_cone_baseline_20261115.step` 同时计算，并检查总遮挡及新增被挡射线。完整结构载荷、夹紧柔顺性、螺纹强度、金属反光和 RF 影响未验证；夹紧内径、实际打印补偿和支撑由供应商确认。
+
+以下继续记录原先选定的 V6 打印结构。
 
 ![当前完整结构与顶部安装细节](renders/current_structure_v6.png)
 
@@ -81,15 +121,10 @@ python -m pytest -p no:cacheprovider tests/test_rtk_mount_selection.py
 
 这套独立入口尚未纳入原 FreeCAD 标准打印排版与完整相机 / 板卡干涉流程；使用独立 STEP 前需在切片软件确认姿态与支撑。
 
-## exports 中保留了什么
+## 定稿清理与历史归档
 
-| 内容 | 当前用途 |
-| --- | --- |
-| `current_structure_battery_review_20261028.step`、`current_structure_standing_review_20261028.step` | 添加 RTK 前的两种原机结构快照 |
-| `rtk_mount_review_20261028/`、`rtk_mount_review_v2_20261028/` … `rtk_mount_review_v6_20261028/` | 六版迭代；各含独立支架、雷达局部 / 站立整机装配、脚本和参数，后期含遮挡数据 |
-| 六个同名 ZIP | 每版的审阅副本，包含图、报告和模型，和展开目录存在重复 |
+`exports/` 当前只保留金属天线支架最终单件 STEP。旧版审阅目录、重复 ZIP、试验 STEP、过渡图表、临时日志和过程计划已移到仓库外同级目录 `Motion-Structure-archive/20261115-metal-final/`，归档清单记录了各文件的 SHA-256。
 
-已纳入仓库的是 V6 最终独立件、站立整机、复现代码、参数与验证材料、一个交互 HTML 和预览 PNG；两份较小的历史支架只作为回归基线。
-旧版大装配、ZIP、调研截图与可下载官方 CAD 留在本地，不随本次提交重复保存。
+仓库保留当前金属单件、整机、复现代码、参数与核验报告、预览和截面图。原 V6 定稿及测试所需的历史基线继续保留；官方 CAD 输入和参考资料不属于本次清理范围。
 
 来源：[Livox 规格](https://www.livoxtech.com/mid-360/specs)、[Livox 手册](https://terra-1-g.djicdn.com/851d20f7b9f64838a34cd02351370894/Livox/Livox_Mid-360_User_Manual_EN.pdf)、[Harxon 官方天线](https://www.harxon.com/product/detail/2)。天线三孔间距和弯头高度来自用户输入，尚未获得对应厂家机械图复核。

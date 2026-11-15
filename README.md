@@ -1,5 +1,15 @@
 # 手持式 MID-360 扫描装置 · 参数化结构件
 
+## 当前定稿：V6 金属天线支架
+
+![V6 金属天线支架定稿：整体、顶部圆环与底部抱箍](renders/rtk_antenna_mount_v6_metal.png)
+
+2026-11-15 已定稿。下载[金属天线支架最终单件 STEP](exports/rtk_antenna_mount_metal_final.step)，或打开[离线三维查看器](renders/rtk_antenna_mount_v6_metal.html)。顶部采用 2 mm 厚圆环，抱箍一般区域壁厚 2 mm，柱根沿圆箍平滑加宽；两耳均为 Ø3.4 通孔，使用 M3 螺栓与外侧螺母，按 Ø6 螺母径向各留 0.5 mm 旋转余量。候选材料为 316L / TC4，具体工艺与实物强度仍待验证。
+
+尺寸、截面图和加工要求见 [RTK 支架说明](README_RTK.md#v6-金属打印版2026-11-15)，文件指纹与 STEP 回读结果见[定稿导出记录](reports/rtk_metal_final_export_20261115.json)。
+
+## 整机结构参考（原 V6 装配）
+
 ![当前完整结构：站立手柄与 V6 RTK 天线支架](renders/current_structure_v6.png)
 
 上图直接依据[当前整机 STEP](step/standing_device_with_rtk_v6.step) 绘制，展示站立手柄方案的 6 个打印件、MID-360 和 GNSS 天线外形包络。右侧为顶部安装细节；相机、开发板、线缆和金属紧固件未显示。
@@ -24,7 +34,7 @@
 
 四个共用件配合一种手柄使用：未加 RTK 支架时，**站立手柄方案共 5 个打印件；电池手柄方案共 6 个打印件**。
 安装 V6 RTK 支架后分别为 6 件和 7 件；RTK 的整机装配仅核对了站立手柄方案。
-当前共有 8 种独立打印件，上盖板的两个方向文件是同一结构的打印摆放方案，不增加零件数量。
+当前共有 8 类独立打印件，RTK 支架有原 V6 与金属定稿两种方案。上盖板的两个方向文件是同一结构的打印摆放方案，不增加零件数量。
 
 | 结构件 | STEP 文件 | 当前主要尺寸或用途 |
 |---|---|---|
@@ -36,6 +46,7 @@
 | 电池手柄本体 | [battery_grip_body.step](step/battery_grip_body.step) | 外 Ø50、内 Ø44，容纳边长 36 × 高 78 的三角柱电池包 |
 | 电池手柄底盖 | [battery_grip_bottom_cap.step](step/battery_grip_bottom_cap.step) | Ø50 × 4，3 个 M3 安装孔 |
 | V6 RTK 天线支架 | [rtk_antenna_mount_v6.step](step/rtk_antenna_mount_v6.step) | 一体抱箍、3 × Ø3.1 圆弧柱、Ø48 × 4 托盘；待试装 |
+| V6 RTK 天线支架 · 金属定稿 | [rtk_antenna_mount_metal_final.step](exports/rtk_antenna_mount_metal_final.step) | 薄圆环托盘、外侧加强支柱、平滑柱根与 M3 螺栓抱箍；单位 mm，单实体 |
 
 表中的板厚不包含隔柱、围挡或耳板高度。B 件包含相机托板后的平面包络为 128 × 98。
 

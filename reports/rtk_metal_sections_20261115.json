@@ -1,0 +1,78 @@
+{
+  "source_step": "step/rtk_antenna_mount_v6_metal.step",
+  "source_step_sha256": "1cfd2adc74fde28957b993407b3dbcdf2f28db69306ced012b310ebb65b0f471",
+  "geometry_modified": false,
+  "edge_sampling_deflection_mm": 0.003,
+  "horizontal_plane": {
+    "origin_mm": [
+      0,
+      0,
+      36.5
+    ],
+    "normal": [
+      0,
+      0,
+      1
+    ],
+    "section_edge_count": 27,
+    "max_plane_residual_mm": 0.0,
+    "material_face_count": 3
+  },
+  "vertical_planes": [
+    {
+      "post": "A",
+      "post_angle_deg": 90,
+      "origin_mm": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        -1.0,
+        6.123233995736766e-17,
+        0.0
+      ],
+      "section_edge_count": 29,
+      "max_plane_residual_mm": 1.715743480079471e-15,
+      "material_face_count": 3
+    },
+    {
+      "post": "B",
+      "post_angle_deg": 210,
+      "origin_mm": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        0.5000000000000001,
+        -0.8660254037844386,
+        0.0
+      ],
+      "section_edge_count": 37,
+      "max_plane_residual_mm": 2.99283535936206e-15,
+      "material_face_count": 4
+    },
+    {
+      "post": "C",
+      "post_angle_deg": 330,
+      "origin_mm": [
+        0,
+        0,
+        0
+      ],
+      "normal": [
+        0.5000000000000004,
+        0.8660254037844384,
+        0.0
+      ],
+      "section_edge_count": 37,
+      "max_plane_residual_mm": 3.6744647684152046e-15,
+      "material_face_count": 4
+    }
+  ],
+  "images": [
+    "renders/rtk_metal_base_section_markup.png",
+    "renders/rtk_metal_root_vertical_sections_markup.png"
+  ]
+}

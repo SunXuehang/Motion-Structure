@@ -1,0 +1,296 @@
+{
+  "status": "FINALIZED GEOMETRY - MANUFACTURING AND PHYSICAL VALIDATION PENDING",
+  "units": "mm",
+  "base_parameters": {
+    "status": "REVIEW PROTOTYPE - NOT A RELEASED PRINT DESIGN",
+    "ring_nominal_diameter_mm": 51.0,
+    "ring_cad_cylindrical_band_z_mm": [
+      34.0171,
+      38.4991
+    ],
+    "clamp_inner_diameter_mm": 51.2,
+    "clamp_radial_wall_mm": 3.5,
+    "clamp_bottom_z_mm": 34.25,
+    "clamp_contact_height_mm": 4.0,
+    "split_gap_mm": 0.8,
+    "clamp_screw_hole_diameter_mm": 3.4,
+    "clamp_screw_count": 1,
+    "printed_part_count": 1,
+    "heatset_pilot_diameter_mm": 4.0,
+    "heatset_pilot_depth_mm": 3.0,
+    "heatset_specification": "M3 brass insert; pilot dimensions reused directly from Part A parameters",
+    "lug_half_x_mm": 7.0,
+    "lug_y_center_mm": 30.8,
+    "lug_y_width_mm": 9.0,
+    "lug_height_mm": 6.8,
+    "post_count": 3,
+    "post_center_radius_mm": 28.3,
+    "post_top_center_radius_mm": 11.0,
+    "post_profile": "circular arc, vertical tangent at fixed lower endpoint",
+    "post_angles_deg": [
+      90.0,
+      210.0,
+      330.0
+    ],
+    "post_diameter_mm": 3.1,
+    "post_root_diameter_mm": 5.0,
+    "post_root_tip_diameter_mm": 4.0,
+    "post_root_blend_height_mm": 3.0,
+    "antenna_diameter_mm": 43.6,
+    "antenna_height_mm": 40.8,
+    "antenna_mount_thread": "#3-48 UNC (3 screws, Harxon official specification)",
+    "antenna_hole_triangle_side_mm": 23.0,
+    "antenna_hole_pitch_source": "User supplied; not independently verified in a manufacturer mechanical drawing",
+    "antenna_screw_clearance_diameter_mm": 3.0,
+    "plate_diameter_mm": 48.0,
+    "plate_thickness_mm": 4.0,
+    "sma_center_opening_diameter_mm": 14.0,
+    "sma_downward_height_user_mm": 16.5,
+    "target_tray_vertical_fov_clearance_mm": 0.9,
+    "height_control": "Tray underside outer edge, vertical distance above the nominal 52 degree cone from O",
+    "reference_origin_z_mm": 47.0,
+    "published_upper_fov_deg": 52.0,
+    "sma_width_and_cable_bend_radius": "Unspecified; central opening and rear under-plate path require trial fit",
+    "mount_face_above_glass_apex_mm": 22.521499172633895,
+    "sma_nominal_vertical_clearance_mm": 6.021499172633895,
+    "height_increase_from_v4_mm": 2.521499172633895,
+    "height_reduction_from_v5_mm": 2.478500827366105,
+    "glass_apex_z_mm": 60.0971,
+    "antenna_mount_face_z_mm": 82.61859917263389,
+    "plate_bottom_z_mm": 78.61859917263389,
+    "tray_min_elevation_from_O_deg": 52.799796541591164,
+    "tray_clearance_above_52deg_at_outer_edge_mm": 0.9000000000000021,
+    "post_arc_radius_mm": 70.79008639399954,
+    "post_arc_angle_deg": 40.920820263897134,
+    "post_root_z_mm": 36.25
+  },
+  "metal_parameters": {
+    "status": "FINALIZED GEOMETRY - MANUFACTURING AND PHYSICAL VALIDATION PENDING",
+    "geometry_finalized_date": "2026-11-15",
+    "design_approved_by_user": true,
+    "candidate_materials": [
+      "316L stainless steel",
+      "TC4 titanium alloy"
+    ],
+    "top_thickness_mm": 2.0,
+    "screw_pad_diameter_mm": 9.0,
+    "antenna_hole_angles_deg": [
+      30.0,
+      150.0,
+      270.0
+    ],
+    "post_angles_deg": [
+      90.0,
+      210.0,
+      330.0
+    ],
+    "top_pattern": "Three holes and three post tips alternate every 60 degrees on the same pitch circle",
+    "top_ring_width_mm": 4.0,
+    "root_profile": "Original inward circular core, outer-only capsule rib, circumferential collar/root fillet",
+    "post_circular_core_diameter_mm": 3.1,
+    "outer_rib_max_depth_mm": 2.0,
+    "post_tangential_width_mm": 3.1,
+    "root_transition_half_width_mm": 8.5,
+    "root_peak_outer_radius_mm": 31.9,
+    "root_top_blend_radius_mm": 0.6,
+    "post_toe_radius_mm": 0.4,
+    "clamp_radial_wall_mm": 2.0,
+    "clamp_edge_radius_mm": 0.4,
+    "lug_plan_corner_radius_mm": 1.2,
+    "lug_half_x_mm": 3.0,
+    "lug_height_mm": 7.0,
+    "lug_front_y_mm": -26.3,
+    "lug_back_y_mm": -35.44,
+    "clamp_screw_y_mm": -30.94,
+    "clamp_nut_max_diameter_mm": 6.0,
+    "clamp_nut_rotation_clearance_mm": 0.5,
+    "clamp_rotation_envelope_diameter_mm": 7.0,
+    "clamp_clearance_diameter_mm": 3.4,
+    "clamp_fastening": "M3 through-bolt and separate external M3 nut; no tapped holes",
+    "lug_thickness_each_mm": 2.6
+  },
+  "effective_post_geometry": {
+    "root_z_mm": 36.25,
+    "tip_radius_mm": 13.279056191361393,
+    "arc_radius_mm": 79.07877735247241,
+    "arc_angle_deg": 35.89909672726279,
+    "root_bottom_z_mm": 34.65,
+    "reinforcement_rule": "Keep original circular core and inner contour; add material along outward profile normal only"
+  },
+  "source_v6_sha256": "30ec1b9ac3612ba875d8bd8dfbc95ccb349e6b188cf7e0fe7826e7bd05a83074",
+  "part_step": "step/rtk_antenna_mount_v6_metal.step",
+  "part_step_sha256": "1cfd2adc74fde28957b993407b3dbcdf2f28db69306ced012b310ebb65b0f471",
+  "assembly_step": "step/standing_device_with_rtk_v6_metal.step",
+  "mount_bounds_mm": {
+    "min": [
+      -28.213736,
+      -35.44,
+      34.15
+    ],
+    "max": [
+      28.213736,
+      31.9,
+      82.618599
+    ],
+    "size": [
+      56.427473,
+      67.34,
+      48.468599
+    ]
+  },
+  "mount_solid_count": 1,
+  "step_roundtrip_valid": true,
+  "step_roundtrip_volume_difference_mm3": 0.0008202106009775889,
+  "step_roundtrip_volume_tolerance": {
+    "relative": 1e-06,
+    "absolute_mm3": 0.001
+  },
+  "volume_integration": "Adaptive Gauss, relative tolerance 1e-9, closed shells only",
+  "mount_volume_mm3": 4618.015893866513,
+  "original_v6_volume_mm3": 10509.527512101215,
+  "volume_reduction_percent": 56.05876773671233,
+  "top_support_volume_mm3": 797.3521630973748,
+  "top_support_count": 1,
+  "antenna_mount_face_z_mm": 82.61859917263389,
+  "top_bottom_z_mm": 80.61859917263389,
+  "central_clear_opening_at_top_mm": 17.558112382722786,
+  "clamp_clearance_holes_mm": [
+    3.4,
+    3.4
+  ],
+  "clamp_lug_thickness_each_mm": 2.6,
+  "M3_shaft_passage_overlap_mm3": 0.0,
+  "external_nut_envelope_overlap_mm3": 0.0,
+  "nominal_nut_to_rear_collar_clearance_mm": 0.5005978584086357,
+  "rotation_envelope_to_rear_collar_clearance_mm": 0.0035070235649570236,
+  "clamp_screw_rearward_shift_mm": 0.14000000000000057,
+  "radar_nominal_overlap_mm3": 0.0,
+  "antenna_nominal_overlap_mm3": 0.0,
+  "external_nut_rotation_access": [
+    {
+      "rotation_envelope_diameter_mm": 7.0,
+      "axial_approach_mm": 12,
+      "start_x_mm": -15.0,
+      "overlap_mm3": 0.0
+    },
+    {
+      "rotation_envelope_diameter_mm": 7.0,
+      "axial_approach_mm": 12,
+      "start_x_mm": 3.0,
+      "overlap_mm3": 0.0
+    }
+  ],
+  "antenna_screw_head_access": [
+    {
+      "xy_mm": [
+        11.500000000000002,
+        6.639528095680696
+      ],
+      "nominal_screw_head_diameter_mm": 6,
+      "depth_mm": 8,
+      "overlap_mm3": 0.0
+    },
+    {
+      "xy_mm": [
+        -11.500000000000002,
+        6.639528095680696
+      ],
+      "nominal_screw_head_diameter_mm": 6,
+      "depth_mm": 8,
+      "overlap_mm3": 0.0
+    },
+    {
+      "xy_mm": [
+        -2.4393230490672858e-15,
+        -13.279056191361393
+      ],
+      "nominal_screw_head_diameter_mm": 6,
+      "depth_mm": 8,
+      "overlap_mm3": 0.0
+    }
+  ],
+  "tilt_vs_base_checks": [
+    {
+      "angle_deg": 0,
+      "mount_vs_base_mm3": 0.0
+    },
+    {
+      "angle_deg": 20,
+      "mount_vs_base_mm3": 0.0
+    },
+    {
+      "angle_deg": 40,
+      "mount_vs_base_mm3": 0.0
+    }
+  ],
+  "installation_path_samples": [
+    {
+      "upward_offset_mm": 0,
+      "overlap_mm3": 0.0
+    },
+    {
+      "upward_offset_mm": 5,
+      "overlap_mm3": 0.0
+    },
+    {
+      "upward_offset_mm": 10,
+      "overlap_mm3": 0.0
+    },
+    {
+      "upward_offset_mm": 20,
+      "overlap_mm3": 0.0
+    },
+    {
+      "upward_offset_mm": 30,
+      "overlap_mm3": 0.0
+    }
+  ],
+  "optical_check": {
+    "method": "New metal STEP geometry, independent O-point projection from (0,0,47), nominal 360/-7..52 deg FOV",
+    "mesh_deflection_mm": 0.025,
+    "runs": [
+      {
+        "angular_step_deg": 0.5,
+        "rays": 84960,
+        "blocked_solid_angle_percent": 5.921837104608546,
+        "baseline_blocked_solid_angle_percent": 5.936036481737122,
+        "newly_blocked_ray_count": 0,
+        "cleared_ray_count": 12
+      },
+      {
+        "angular_step_deg": 0.25,
+        "rays": 339840,
+        "blocked_solid_angle_percent": 5.929100095533419,
+        "baseline_blocked_solid_angle_percent": 5.934700677191293,
+        "newly_blocked_ray_count": 0,
+        "cleared_ray_count": 21
+      },
+      {
+        "angular_step_deg": 0.125,
+        "rays": 1359360,
+        "blocked_solid_angle_percent": 5.924630189761928,
+        "baseline_blocked_solid_angle_percent": 5.934580434451118,
+        "newly_blocked_ray_count": 0,
+        "cleared_ray_count": 133
+      }
+    ],
+    "comparison_baseline_step": "tests/rtk_mount_metal_cone_baseline_20261115.step",
+    "comparison_baseline_sha256": "5042d312e694cdb3721a2334a2d37259e3f324e50e3fed6e45c2357012e1043f",
+    "limitations": "Not measured point loss. Real optical aperture, screws, cable, reflections and metal finish not modelled."
+  },
+  "material_note": "Geometry shared for 316L/TC4 candidates; supplier process, final grade, tolerances and structural loads are not qualified.",
+  "manufacturing": [
+    "Both ears have coaxial 3.4 mm CLEARANCE holes for an M3 through-bolt and separate exterior nut. DO NOT tap.",
+    "Top three 3 mm holes are CLEARANCE holes for original antenna screws; DO NOT tap them M3.",
+    "No printed threads or inserts. Confirm clearance-hole sizing after printing, deburr and finish mating surfaces.",
+    "Supplier to determine orientation, removable supports, stress relief and dimensional compensation.",
+    "Nominal clamp ID 51.2 mm and 0.8 mm slit remain trial-fit dimensions; no clamp torque is specified."
+  ],
+  "limitations": [
+    "No structural, fatigue, clamp-compliance, thread-strength or physical test performed.",
+    "Nut rotation uses the user-specified 6 mm maximum diameter plus 0.5 mm radial allowance (7 mm envelope). This is not a guarantee for larger tools.",
+    "Antenna screw pitch and SMA extension inherit user-supplied V6 dimensions; verify actual screw length after thinning.",
+    "Metal clamp contact, RF/multipath effects and real LiDAR reflections were not tested.",
+    "Full sensor/camera/cable assemblies and all-pairs interference are outside these checks."
+  ]
+}
