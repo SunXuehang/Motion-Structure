@@ -1,0 +1,412 @@
+{
+  "design_approved_by_user": true,
+  "date": "2026-11-17",
+  "units": "mm",
+  "source_baseline_step": "tests\\standing_handle_baseline_20261117.step",
+  "source_baseline_sha256": "f10067e01c12dd2951854b51b7f0fe284c3bc11c2959744e1e39b94df74d0390",
+  "source_metal_assembly_sha256": "94e5efac73f656e78c9bf5dcaa3566d9dd406695293342bb1352b8eab98104fe",
+  "handle_parameters": {
+    "flange_length": 128.0,
+    "flange_width": 78.0,
+    "flange_corner_radius": 4.0,
+    "flange_thickness": 6.0,
+    "cover_underside_z": -5.5,
+    "mount_x": 59.0,
+    "mount_y_pitch": 10.0,
+    "mount_hole_diameter": 3.4,
+    "board_screw_x": 50.0,
+    "board_screw_y": 35.0,
+    "board_screw_clearance_diameter": 6.5,
+    "uwb_shelf_width": 32.0,
+    "uwb_shelf_projection": 20.0,
+    "uwb_shelf_root_radius": 4.0,
+    "uwb_shelf_corner_radius": 3.0,
+    "uwb_hole_pitch": 12.0,
+    "uwb_hole_front_offset": 12.0,
+    "uwb_hole_diameter": 3.4,
+    "shoulder_height": 6.0,
+    "shoulder_top_length": 88.0,
+    "shoulder_top_width": 58.0,
+    "shoulder_top_corner_radius": 15.0,
+    "grip_outer_diameter": 42.0,
+    "wall_thickness": 3.5,
+    "grip_length": 88.0,
+    "base_blend_height": 12.0,
+    "base_plate_length": 104.0,
+    "base_plate_width": 88.0,
+    "base_plate_corner_radius": 24.0,
+    "base_thickness": 6.0,
+    "base_sight_hole_diameter": 5.0,
+    "base_sight_edge_clearance": 10.0
+  },
+  "shelf_dimensions_mm": [
+    32.0,
+    20.0,
+    6.0
+  ],
+  "hole_axes_board_xy_mm": [
+    [
+      -6.0,
+      51.0
+    ],
+    [
+      6.0,
+      51.0
+    ]
+  ],
+  "handle_height_mm": 118.0,
+  "handle_bounds_board_mm": {
+    "min": [
+      -64.0,
+      -44.0,
+      -123.5
+    ],
+    "max": [
+      64.0,
+      59.0,
+      -5.5
+    ],
+    "size": [
+      128.0,
+      103.0,
+      118.0
+    ]
+  },
+  "handle_solid_count": 1,
+  "print_export_translation_yz_mm": [
+    -7.5,
+    123.5
+  ],
+  "print_export_bounds_mm": {
+    "min": [
+      -64.0,
+      -51.5,
+      -0.0
+    ],
+    "max": [
+      64.0,
+      51.5,
+      118.0
+    ],
+    "size": [
+      128.0,
+      103.0,
+      118.0
+    ]
+  },
+  "assembly_part_count": 10,
+  "assembly_solid_count": 16,
+  "uwb_reference_body_dimensions_mm": [
+    56.0,
+    46.26,
+    12.0
+  ],
+  "antenna_reference": {
+    "fold_deg": 90,
+    "fold_direction": "+Y forward",
+    "axial_envelope_mm": 26.0,
+    "arm_envelope_mm": 64.0,
+    "diameter_envelope_mm": 9.4,
+    "basis": "Datasheet p43: 85.5 +/-1 mm total, 63 mm arm, diameter 9.30 +/-0.05 mm. Axial 26 adds 3.5 mm to 85.5-63; arm adds 1 mm; diameter rounded up.",
+    "uncertainty": "Exact hinge axis, connector seating and rotating joint shape are not fully dimensioned; conservative reference envelope is not certified manufacturer CAD."
+  },
+  "folded_antenna_floor_clearance_mm": 35.040000000000006,
+  "folded_antenna_to_handle_clearance_mm": 25.299999999999997,
+  "uwb_body_to_grip_nominal_y_gap_mm": 24.0,
+  "pairwise_new_vs_existing": [
+    {
+      "part": "radar_plate",
+      "reference": "uwb_body",
+      "overlap_mm3": 0.0,
+      "distance_mm": 79.00897774835464
+    },
+    {
+      "part": "radar_plate",
+      "reference": "antenna_90deg",
+      "overlap_mm3": 0.0,
+      "distance_mm": 125.22179406493103
+    },
+    {
+      "part": "tilt_base",
+      "reference": "uwb_body",
+      "overlap_mm3": 0.0,
+      "distance_mm": 67.6522
+    },
+    {
+      "part": "tilt_base",
+      "reference": "antenna_90deg",
+      "overlap_mm3": 0.0,
+      "distance_mm": 113.9122
+    },
+    {
+      "part": "upper_cover",
+      "reference": "uwb_body",
+      "overlap_mm3": 0.0,
+      "distance_mm": 40.605152544435356
+    },
+    {
+      "part": "upper_cover",
+      "reference": "antenna_90deg",
+      "overlap_mm3": 0.0,
+      "distance_mm": 87.30761999298801
+    },
+    {
+      "part": "lower_cover",
+      "reference": "uwb_body",
+      "overlap_mm3": 0.0,
+      "distance_mm": 8.48528137423857
+    },
+    {
+      "part": "lower_cover",
+      "reference": "antenna_90deg",
+      "overlap_mm3": 0.0,
+      "distance_mm": 52.76739144585413
+    },
+    {
+      "part": "standing_handle",
+      "reference": "uwb_body",
+      "overlap_mm3": 0.0,
+      "distance_mm": 0.0
+    },
+    {
+      "part": "standing_handle",
+      "reference": "antenna_90deg",
+      "overlap_mm3": 0.0,
+      "distance_mm": 25.299999999999997
+    },
+    {
+      "part": "MID360",
+      "reference": "uwb_body",
+      "overlap_mm3": 0.0,
+      "distance_mm": 86.57208798093225
+    },
+    {
+      "part": "MID360",
+      "reference": "antenna_90deg",
+      "overlap_mm3": 0.0,
+      "distance_mm": 132.34638657281084
+    },
+    {
+      "part": "metal_RTK_mount",
+      "reference": "uwb_body",
+      "overlap_mm3": 0.0,
+      "distance_mm": 120.32806187809031
+    },
+    {
+      "part": "metal_RTK_mount",
+      "reference": "antenna_90deg",
+      "overlap_mm3": 0.0,
+      "distance_mm": 166.34196253145157
+    },
+    {
+      "part": "GNSS_antenna",
+      "reference": "uwb_body",
+      "overlap_mm3": 0.0,
+      "distance_mm": 169.63124787565033
+    },
+    {
+      "part": "GNSS_antenna",
+      "reference": "antenna_90deg",
+      "overlap_mm3": 0.0,
+      "distance_mm": 215.55892975078078
+    }
+  ],
+  "bend_sweep": [
+    {
+      "bend_deg": 0,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -24.25999999999999
+    },
+    {
+      "bend_deg": 5,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -24.42609300000001
+    },
+    {
+      "bend_deg": 10,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -24.103843000000012
+    },
+    {
+      "bend_deg": 15,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -23.295702000000006
+    },
+    {
+      "bend_deg": 20,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -22.007822000000004
+    },
+    {
+      "bend_deg": 25,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -20.25000399999999
+    },
+    {
+      "bend_deg": 30,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -18.035626000000008
+    },
+    {
+      "bend_deg": 35,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -15.381540000000001
+    },
+    {
+      "bend_deg": 40,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -12.307945999999987
+    },
+    {
+      "bend_deg": 45,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -8.838235999999995
+    },
+    {
+      "bend_deg": 50,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -4.998816000000005
+    },
+    {
+      "bend_deg": 55,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": -0.8189069999999958
+    },
+    {
+      "bend_deg": 60,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": 3.669680999999997
+    },
+    {
+      "bend_deg": 65,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": 8.432784999999996
+    },
+    {
+      "bend_deg": 70,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": 13.434156000000002
+    },
+    {
+      "bend_deg": 75,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": 18.635729999999995
+    },
+    {
+      "bend_deg": 80,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": 23.997919999999993
+    },
+    {
+      "bend_deg": 85,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": 29.479917
+    },
+    {
+      "bend_deg": 90,
+      "handle_overlap_mm3": 0.0,
+      "floor_clearance_mm": 35.040000000000006
+    }
+  ],
+  "screw_access": [
+    {
+      "xy_mm": [
+        -6.0,
+        51.0
+      ],
+      "shaft_diameter_mm": 3,
+      "above_shelf_tool_envelope_diameter_mm": 6.4,
+      "above_shelf_access_height_mm": 20,
+      "maximum_overlap_mm3": 0.0
+    },
+    {
+      "xy_mm": [
+        6.0,
+        51.0
+      ],
+      "shaft_diameter_mm": 3,
+      "above_shelf_tool_envelope_diameter_mm": 6.4,
+      "above_shelf_access_height_mm": 20,
+      "maximum_overlap_mm3": 0.0
+    }
+  ],
+  "preserved_assembly_parts": [
+    {
+      "part": "radar_plate",
+      "adaptive_closed_shell_volume_delta_mm3": 0.0,
+      "bounds_preserved": true,
+      "solid_count_preserved": true
+    },
+    {
+      "part": "tilt_base",
+      "adaptive_closed_shell_volume_delta_mm3": 0.0,
+      "bounds_preserved": true,
+      "solid_count_preserved": true
+    },
+    {
+      "part": "upper_cover",
+      "adaptive_closed_shell_volume_delta_mm3": 0.0,
+      "bounds_preserved": true,
+      "solid_count_preserved": true
+    },
+    {
+      "part": "lower_cover",
+      "adaptive_closed_shell_volume_delta_mm3": 0.0,
+      "bounds_preserved": true,
+      "solid_count_preserved": true
+    },
+    {
+      "part": "MID360",
+      "adaptive_closed_shell_volume_delta_mm3": 1.701118890196085e-07,
+      "bounds_preserved": true,
+      "solid_count_preserved": true
+    },
+    {
+      "part": "metal_RTK_mount",
+      "adaptive_closed_shell_volume_delta_mm3": 0.00010090339947055327,
+      "bounds_preserved": true,
+      "solid_count_preserved": true
+    },
+    {
+      "part": "GNSS_antenna",
+      "adaptive_closed_shell_volume_delta_mm3": 0.0,
+      "bounds_preserved": true,
+      "solid_count_preserved": true
+    }
+  ],
+  "step_roundtrip_valid": true,
+  "sources": [
+    "https://ftp.nooploop.com/downloads/linktrack/LinkTrack_Datasheet_V2.3_zh.pdf#page=43",
+    "https://ftp.nooploop.com/downloads/linktrack/LinkTrack_Datasheet_V2.3_zh.pdf#page=44"
+  ],
+  "limitations": [
+    "UWB and antenna are reference envelopes, not official detailed CAD.",
+    "M3 engagement depth is unspecified; choose screw length after measuring actual device.",
+    "No physical print/assembly, mechanical strength, tipping stability or RF test performed.",
+    "The represented assembly excludes camera, compute board, cables and metal fasteners.",
+    "The FreeCAD source was updated but cannot be run in this Windows environment; exported models were built and verified using OCP against the preserved original STEP.",
+    "Fold the antenna before resting on a table; the straight-down envelope extends below the feet."
+  ],
+  "outputs": {
+    "canonical_handle": {
+      "path": "step\\standing_handle_body.step",
+      "sha256": "982cbc758221b54794aa1e399dc14be0eea83a6828c1c2ea76f3c869149405b7"
+    },
+    "print_handle": {
+      "path": "exports\\standing_handle_uwb.step",
+      "sha256": "5737dd3959e9c6484b62205295e52f57634201e36c9fe0f054e4ad8942c8faaa"
+    },
+    "assembly": {
+      "path": "step\\standing_device_with_uwb.step",
+      "sha256": "aa67667de94428d222b47abc011093761f9b122400b0746ce75be42cb8a4b296"
+    },
+    "standing_handle_uwb": {
+      "path": "renders\\standing_handle_uwb.png",
+      "sha256": "011351356e55dc6949551d22fa3b0e9c474451c9c1332090edfff34ec90bfd1a"
+    },
+    "uwb_shelf_detail": {
+      "path": "renders\\uwb_shelf_detail.png",
+      "sha256": "67b7b55057b2b3601d3d0e8b43bcd352ed99e178fcf74664f0b5b2f63ede548b"
+    }
+  }
+}

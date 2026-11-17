@@ -1,5 +1,17 @@
 # 手持式 MID-360 扫描装置 · 参数化结构件
 
+## 手柄新增 UWB 托耳（2026-11-17）
+
+![手柄前伸 UWB 托耳与折弯天线](renders/standing_handle_uwb.png)
+
+站立手柄顶部法兰的前侧（+Y，与 RealSense 同侧）新增 **32 × 20 × 6 mm 一体托耳**，根部 R4；两个 **Ø3.4 通孔、中心距 12 mm**，UWB LinkTrack P-A 倒挂在下方。手柄仍高 **118 mm**，天线向前折弯 90° 后保留几何离桌间隙；USB/UART 不作让位。
+
+- [独立手柄 STEP](exports/standing_handle_uwb.step)：单实体，已将支脚底面放到 Z=0、XY 包络居中，便于导入切片软件；打印朝向与支撑仍需按工艺设置。
+- [整机装配 STEP](step/standing_device_with_uwb.step)：沿用已定稿金属 RTK 支架，包含 UWB 和折弯天线的**参考包络**。
+- [托耳孔位近景](renders/uwb_shelf_detail.png)与[检查说明](reports/uwb_mount_20261117.md)。
+
+现有 `step/standing_handle_body.step` 已同步增加托耳，保持开发板装配坐标；旧版整机参考 STEP 保留作为历史版本，含 UWB 的当前装配请使用上述新文件。重建入口为 `.venv/Scripts/python.exe scripts/build_uwb_mount.py`，使用现有 OCP 环境；参考包络不代表厂商精确 CAD。原手柄 STEP 在 `tests/standing_handle_baseline_20261117.step` 保留用于回归检查。
+
 ## 当前定稿：V6 金属天线支架
 
 ![V6 金属天线支架定稿：整体、顶部圆环与底部抱箍](renders/rtk_antenna_mount_v6_metal.png)
@@ -42,7 +54,7 @@
 | 结构 B · 倾斜底座 | [part_b_tilt_base.step](step/part_b_tilt_base.step) | 基板 128 × 78 × 4，R45，0–40°；含前侧 D435i 托板 |
 | 开发板上盖板 | [board_cover_upper.step](step/board_cover_upper.step) | 板体 128 × 78 × 3，上隔柱高 10，带接口保护壁 |
 | 开发板下盖板 | [board_cover_lower.step](step/board_cover_lower.step) | 板体 128 × 78 × 3，下隔柱高 13，带加高护壁和局部缺口 |
-| 站立手柄 | [standing_handle_body.step](step/standing_handle_body.step) | Ø42 空心握把、104 × 88 支脚，总高 118 |
+| 站立手柄 | [standing_handle_body.step](step/standing_handle_body.step) | Ø42 空心握把、104 × 88 支脚，总高 118；前侧新增 32 × 20 × 6 UWB 托耳 |
 | 电池手柄本体 | [battery_grip_body.step](step/battery_grip_body.step) | 外 Ø50、内 Ø44，容纳边长 36 × 高 78 的三角柱电池包 |
 | 电池手柄底盖 | [battery_grip_bottom_cap.step](step/battery_grip_bottom_cap.step) | Ø50 × 4，3 个 M3 安装孔 |
 | V6 RTK 天线支架 | [rtk_antenna_mount_v6.step](step/rtk_antenna_mount_v6.step) | 一体抱箍、3 × Ø3.1 圆弧柱、Ø48 × 4 托盘；待试装 |
@@ -198,7 +210,7 @@ D435i 托板与 B 一体生成，位于 +Y 前侧，尺寸 92 × 20 × 4、平�
 
 支脚前侧有 Ø5 观察孔，轴线为 `x = 0, y = 34`，距 +Y 外边缘 10。
 内部是空腔，底部保留支脚实体；没有电池包定位结构或可拆底盖。
-源码入口为 `standing_handle.make_standing_handle()`，尚无专用构建脚本或专用回归测试。
+源码入口为 `standing_handle.make_standing_handle()`；带 UWB 托耳的 OCP 构建入口为 `scripts/build_uwb_mount.py`，几何回归检查见 `tests/test_uwb_mount.py`。
 
 ### 电池手柄
 

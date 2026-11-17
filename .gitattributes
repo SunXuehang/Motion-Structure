@@ -10,3 +10,8 @@ tests/rtk_mount_metal_cone_baseline_20261115.step binary
 # Generated offline viewer includes the Plotly bundle; regenerate instead of merging.
 renders/rtk_scan_occlusion_3d_v6_20261028.html binary
 renders/rtk_antenna_mount_v6_metal.html binary
+# Keep UWB deliverable hashes stable across Windows checkout line endings.
+step/standing_handle_body.step binary
+step/standing_device_with_uwb.step binary
+exports/standing_handle_uwb.step binary
+tests/standing_handle_baseline_20261117.step binary

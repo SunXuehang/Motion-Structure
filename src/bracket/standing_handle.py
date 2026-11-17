@@ -36,6 +36,15 @@ class StandingHandleParameters:
     board_screw_y: float = 35.0
     board_screw_clearance_diameter: float = 6.5
 
+    # Front shelf: the device supplies the M3 threads; the shelf is clearance only.
+    uwb_shelf_width: float = 32.0
+    uwb_shelf_projection: float = 20.0
+    uwb_shelf_root_radius: float = 4.0
+    uwb_shelf_corner_radius: float = 3.0
+    uwb_hole_pitch: float = 12.0
+    uwb_hole_front_offset: float = 12.0
+    uwb_hole_diameter: float = 3.4
+
     # Short shoulder from the flange rectangle down to the cylinder.  The loft
     # starts from an inset outline that keeps both the outer screw ring and the
     # four inner board-screw clearances clear: the flange stays flat and open
@@ -119,6 +128,21 @@ class StandingHandleParameters:
             raise ValueError("standing-handle dimensions must be finite and positive")
         if not isfinite(self.cover_underside_z):
             raise ValueError("the cover underside plane must be finite")
+        uwb = (self.uwb_shelf_width, self.uwb_shelf_projection,
+               self.uwb_shelf_root_radius, self.uwb_shelf_corner_radius,
+               self.uwb_hole_pitch, self.uwb_hole_front_offset,
+               self.uwb_hole_diameter)
+        if not all(isfinite(value) and value > 0 for value in uwb):
+            raise ValueError("UWB dimensions must be finite and positive")
+        margin = self.uwb_hole_diameter / 2 + 2.0
+        if (self.uwb_hole_pitch / 2 + margin > self.uwb_shelf_width / 2
+                or self.uwb_hole_pitch <= self.uwb_hole_diameter + 2.0
+                or self.uwb_hole_front_offset < margin
+                or self.uwb_hole_front_offset + margin > self.uwb_shelf_projection
+                or 2*self.uwb_shelf_corner_radius > min(self.uwb_shelf_width, self.uwb_shelf_projection)
+                or self.uwb_shelf_root_radius > self.uwb_shelf_projection
+                or self.uwb_shelf_width/2+self.uwb_shelf_root_radius > self.flange_length/2-self.flange_corner_radius):
+            raise ValueError("UWB shelf must keep holes and root blends within its outline")
         if 2.0 * self.flange_corner_radius > min(
             self.flange_length, self.flange_width
         ):
@@ -182,6 +206,12 @@ def board_screw_centers(
         for x in (-p.board_screw_x, p.board_screw_x)
         for y in (-p.board_screw_y, p.board_screw_y)
     )
+
+
+def uwb_hole_centers(p: StandingHandleParameters) -> tuple[tuple[float, float], ...]:
+    """Two vertical clearance axes for the P-A's 12 mm pitch threaded mount."""
+    y = p.flange_width / 2 + p.uwb_hole_front_offset
+    return ((-p.uwb_hole_pitch / 2, y), (p.uwb_hole_pitch / 2, y))
 
 
 def _rounded_rect_wire(
@@ -281,13 +311,38 @@ def _rounded_prism(
 
 
 def _flange_solid(p: StandingHandleParameters) -> "Part.Shape":
-    return _rounded_prism(
+    import FreeCAD as App
+    import Part
+
+    flange = _rounded_prism(
         p.flange_length,
         p.flange_width,
         p.flange_corner_radius,
         p.flange_thickness,
         p.flange_z0,
     )
+    half = p.uwb_shelf_width / 2
+    y0 = p.flange_width / 2
+    end = y0 + p.uwb_shelf_projection
+    shelf = Part.makeBox(p.uwb_shelf_width, p.uwb_shelf_projection,
+                         p.flange_thickness, App.Vector(-half, y0, p.flange_z0))
+    r = p.uwb_shelf_corner_radius
+    for side in (-1, 1):
+        x0 = half-r if side > 0 else -half
+        corner = Part.makeBox(r, r, p.flange_thickness,
+                              App.Vector(x0, end-r, p.flange_z0))
+        circle = Part.makeCylinder(r, p.flange_thickness,
+                                  App.Vector(side*(half-r), end-r, p.flange_z0))
+        shelf = shelf.cut(corner.cut(circle))
+    r = p.uwb_shelf_root_radius
+    for side in (-1, 1):
+        x0 = half if side > 0 else -half-r
+        square = Part.makeBox(r, r, p.flange_thickness,
+                              App.Vector(x0, y0, p.flange_z0))
+        circle = Part.makeCylinder(r, p.flange_thickness,
+                                  App.Vector(side*(half+r), y0+r, p.flange_z0))
+        shelf = shelf.fuse(square.cut(circle))
+    return flange.fuse(shelf).removeSplitter()
 
 
 def make_standing_handle(p: StandingHandleParameters | None = None) -> "Part.Shape":
@@ -367,6 +422,12 @@ def make_standing_handle(p: StandingHandleParameters | None = None) -> "Part.Sha
         )
         for x, y in board_screw_centers(params)
     )
+    uwb_holes = tuple(
+        Part.makeCylinder(params.uwb_hole_diameter / 2,
+                          params.flange_thickness + 0.2,
+                          App.Vector(x, y, params.cover_underside_z + 0.1), down)
+        for x, y in uwb_hole_centers(params)
+    )
     # Central sight hole through the foot, on the bore axis.
     sight_y = params.base_plate_width / 2.0 - params.base_sight_edge_clearance
     base_hole = Part.makeCylinder(
@@ -383,7 +444,7 @@ def make_standing_handle(p: StandingHandleParameters | None = None) -> "Part.Sha
         down,
     )
 
-    cutters = (*mount_cylinders, *board_screw_holes, base_hole, inner_bore)
+    cutters = (*mount_cylinders, *board_screw_holes, *uwb_holes, base_hole, inner_bore)
     fused_cutters = cutters[0]
     for cutter in cutters[1:]:
         fused_cutters = fused_cutters.fuse(cutter)

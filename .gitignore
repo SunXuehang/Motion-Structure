@@ -9,6 +9,7 @@ models/*.FCStd
 models/*.FCBak
 exports/*
 !exports/rtk_antenna_mount_metal_final.step
+!exports/standing_handle_uwb.step
 reports/*.json
 
 # renders/ 同时存放生成图与大体积参考网格
@@ -44,4 +45,10 @@ renders/rtk_scan_occlusion_3d_v4_20261028.html
 renders/rtk_scan_occlusion_3d_v5_20261028.html
 renders/rtk_scan_occlusion_v3_20261028.svg
 reports/rtk_mount_sources/
+reports/uwb_sources/
+reports/uwb_build.log
+reports/uwb_tests.log
+!reports/uwb_mount_20261117.json
+!renders/standing_handle_uwb.png
+!renders/uwb_shelf_detail.png
 vendor/livox/*.stp
